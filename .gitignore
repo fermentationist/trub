@@ -1,0 +1,39 @@
+# Node
+node_modules/
+.pnpm/
+.pnpm-store/
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+package-lock.json
+yarn.lock
+
+# pnpm workspace
+.pnpmfile.cjs
+
+# Vite
+.vite/
+dist/
+build/
+out/
+.eslintcache
+
+# Svelte
+.svelte-kit/
+public/build/
+
+# TypeScript
+*.tsbuildinfo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo

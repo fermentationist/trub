@@ -1,6 +1,7 @@
 <script lang="ts">
   import { push } from "svelte-spa-router";
   import { recipe_list_store } from "../stores/recipe_list_store.svelte";
+  import { equipment_store } from "../stores/equipment_store.svelte";
   import RecipeCard from "../components/recipe_card/recipe_card.svelte";
   import type { SortField, SortDirection } from "../stores/recipe_list_store.svelte";
 
@@ -47,6 +48,7 @@
 
   $effect(() => {
     void recipe_list_store.load();
+    void equipment_store.load();
   });
 
   // ---------------------------------------------------------------------------

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { recipe_store } from "../stores/recipe_store.svelte";
+  import { equipment_store, DEFAULT_BATCH_SIZE_L, DEFAULT_EFFICIENCY_PCT } from "../stores/equipment_store.svelte";
   import FermentablesSection from "../components/fermentables_section/fermentables_section.svelte";
   import HopsSection from "../components/hops_section/hops_section.svelte";
   import YeastSection from "../components/yeast_section/yeast_section.svelte";
@@ -19,13 +20,6 @@
   } from "@trub/types";
 
   // ---------------------------------------------------------------------------
-  // Constants
-  // ---------------------------------------------------------------------------
-
-  const DEFAULT_BATCH_SIZE_L = 20;
-  const DEFAULT_EFFICIENCY_PCT = 72;
-
-  // ---------------------------------------------------------------------------
   // Props
   // ---------------------------------------------------------------------------
 
@@ -38,6 +32,10 @@
   // ---------------------------------------------------------------------------
   // Lifecycle — load or create recipe, reset on unmount
   // ---------------------------------------------------------------------------
+
+  $effect(() => {
+    void equipment_store.load();
+  });
 
   $effect(() => {
     const id_param = params.id;
@@ -65,6 +63,18 @@
   const is_dirty = $derived(recipe_store.is_dirty);
   const can_undo = $derived(recipe_store.can_undo);
   const can_redo = $derived(recipe_store.can_redo);
+
+  const equipment_profiles = $derived(equipment_store.profiles);
+  const batch_size_l = $derived(
+    recipe !== null
+      ? equipment_store.batch_size_for(recipe.equipment_id)
+      : DEFAULT_BATCH_SIZE_L,
+  );
+  const efficiency_pct = $derived(
+    recipe !== null
+      ? equipment_store.efficiency_for(recipe.equipment_id)
+      : DEFAULT_EFFICIENCY_PCT,
+  );
 
   // ---------------------------------------------------------------------------
   // Event handlers
@@ -159,6 +169,11 @@
     recipe_store.update_fermentation_step(index, step);
   }
 
+  function handle_equipment_change(e: Event): void {
+    const value = (e.target as HTMLSelectElement).value;
+    recipe_store.update("equipment_id", value === "" ? null : parseInt(value, 10));
+  }
+
   function handle_notes_input(e: Event): void {
     const value = (e.target as HTMLTextAreaElement).value;
     recipe_store.update("notes", value);
@@ -242,14 +257,31 @@
       </div>
     </header>
 
+    <!-- Equipment selector -->
+    <div class="equipment-row" data-testid="equipment-row">
+      <label class="equipment-label" for="equipment-select">Equipment</label>
+      <select
+        id="equipment-select"
+        class="equipment-select"
+        data-testid="equipment-select"
+        value={recipe.equipment_id ?? ""}
+        onchange={handle_equipment_change}
+      >
+        <option value="">None (defaults)</option>
+        {#each equipment_profiles as profile (profile.id)}
+          <option value={profile.id}>{profile.name}</option>
+        {/each}
+      </select>
+    </div>
+
     <!-- Stats -->
     <div class="stats-row" data-testid="stats-row">
       <StatsDashboard
         fermentables={recipe.fermentables}
         yeast={recipe.yeast}
         hops={recipe.hops}
-        batch_size_l={DEFAULT_BATCH_SIZE_L}
-        efficiency_pct={DEFAULT_EFFICIENCY_PCT}
+        batch_size_l={batch_size_l}
+        efficiency_pct={efficiency_pct}
         abv_formula={recipe.abv_formula}
         ibu_formula={recipe.ibu_formula}
         color_formula={recipe.color_formula}
@@ -322,7 +354,7 @@
       <WaterChemistrySection
         water_adjustments={recipe.water_adjustments}
         fermentables={recipe.fermentables}
-        batch_size_l={DEFAULT_BATCH_SIZE_L}
+        batch_size_l={batch_size_l}
         mash_ph_formula={recipe.mash_ph_formula}
         onupdate_adjustments={handle_update_water_adjustments}
       />
@@ -483,6 +515,49 @@
     font-weight: var(--font-weight-medium);
     letter-spacing: 0.04em;
     text-transform: uppercase;
+  }
+
+  /* ---------------------------------------------------------------------------
+    Equipment selector
+  --------------------------------------------------------------------------- */
+
+  .equipment-row {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+  }
+
+  .equipment-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-medium);
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+  }
+
+  .equipment-select {
+    flex: 1;
+    max-width: 300px;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    transition:
+      border-color var(--duration-fast) var(--easing-base),
+      box-shadow var(--duration-fast) var(--easing-base);
+  }
+
+  .equipment-select:hover {
+    border-color: var(--color-accent);
+  }
+
+  .equipment-select:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 25%, transparent);
   }
 
   /* ---------------------------------------------------------------------------

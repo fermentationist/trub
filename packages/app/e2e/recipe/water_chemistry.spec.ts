@@ -178,9 +178,9 @@ test.describe("Water Chemistry section", () => {
   }) => {
     await open_new_recipe(page);
 
-    // Add 5 g gypsum (CaSO₄). With 20 L batch size:
-    //   Ca  = 232.8 * (5/20) = 58.2  → rounds to 58
-    //   SO₄ = 558.0 * (5/20) = 139.5 → rounds to 140
+    // Add 5 g gypsum (CaSO₄). With 18.93 L batch size:
+    //   Ca  = 232.8 * (5/18.93) = 61.5  → rounds to 61
+    //   SO₄ = 558.0 * (5/18.93) = 147.4 → rounds to 147
     //   Cl  = 0 → ratio = Infinity → formatted as "∞"
     await page.getByTestId("salt-gypsum-input").fill("5");
 
@@ -222,10 +222,10 @@ test.describe("Water Chemistry section", () => {
     // Verify numeric Ca and SO₄ are close to the expected rounded values.
     const ca_final = await get_mineral_ppm(page, "mineral-calcium");
     const so4_final = await get_mineral_ppm(page, "mineral-sulfate");
-    // Ca: 232.8 * 5/20 = 58.2 → Math.round = 58
-    expect(ca_final).toBe(58);
-    // SO₄: 558.0 * 5/20 = 139.5 → Math.round = 140
-    expect(so4_final).toBe(140);
+    // Ca: 232.8 * 5/18.93 ≈ 61.5 → Math.round = 61
+    expect(ca_final).toBe(61);
+    // SO₄: 558.0 * 5/18.93 ≈ 147.4 → Math.round = 147
+    expect(so4_final).toBe(147);
   });
 
   // -------------------------------------------------------------------------
@@ -237,9 +237,9 @@ test.describe("Water Chemistry section", () => {
   }) => {
     await open_new_recipe(page);
 
-    // Add 5 g CaCl₂. With 20 L:
-    //   Ca = 272.6 * (5/20) = 68.15 → 68
-    //   Cl = 482.3 * (5/20) = 120.575 → 121
+    // Add 5 g CaCl₂. With 18.93 L:
+    //   Ca = 272.6 * (5/18.93) = 72.0 → 72
+    //   Cl = 482.3 * (5/18.93) = 127.4 → 127
     //   SO₄ = 0 → ratio = 0 → "very malty/sweet"
     await page.getByTestId("salt-calcium-chloride-input").fill("5");
 
@@ -254,10 +254,10 @@ test.describe("Water Chemistry section", () => {
     const cl = await get_mineral_ppm(page, "mineral-chloride");
     const so4 = await get_mineral_ppm(page, "mineral-sulfate");
 
-    // Ca: Math.round(272.6 * 5/20) = Math.round(68.15) = 68
-    expect(ca).toBe(68);
-    // Cl: Math.round(482.3 * 5/20) = Math.round(120.575) = 121
-    expect(cl).toBe(121);
+    // Ca: Math.round(272.6 * 5/18.93) = Math.round(72.0) = 72
+    expect(ca).toBe(72);
+    // Cl: Math.round(482.3 * 5/18.93) = Math.round(127.4) = 127
+    expect(cl).toBe(127);
     // SO₄ must remain 0 — CaCl₂ adds no sulfate.
     expect(so4).toBe(0);
 
@@ -293,9 +293,9 @@ test.describe("Water Chemistry section", () => {
     // Capture the baseline mash pH with no water additions.
     const ph_baseline = await get_mash_ph(page);
 
-    // Add 5 g baking soda (NaHCO₃). With 20 L:
-    //   Na   = 274.0 * (5/20) = 68.5  → 69
-    //   HCO₃ = 726.0 * (5/20) = 181.5 → 182
+    // Add 5 g baking soda (NaHCO₃). With 18.93 L:
+    //   Na   = 274.0 * (5/18.93) = 72.4  → 72
+    //   HCO₃ = 726.0 * (5/18.93) = 191.8 → 192
     await page.getByTestId("salt-baking-soda-input").fill("5");
 
     // Na and HCO₃ must increase from 0.
@@ -312,10 +312,10 @@ test.describe("Water Chemistry section", () => {
     const na = await get_mineral_ppm(page, "mineral-sodium");
     const hco3 = await get_mineral_ppm(page, "mineral-bicarbonate");
 
-    // Na: Math.round(274.0 * 5/20) = Math.round(68.5) = 69
-    expect(na).toBe(69);
-    // HCO₃: Math.round(726.0 * 5/20) = Math.round(181.5) = 182
-    expect(hco3).toBe(182);
+    // Na: Math.round(274.0 * 5/18.93) = Math.round(72.4) = 72
+    expect(na).toBe(72);
+    // HCO₃: Math.round(726.0 * 5/18.93) = Math.round(191.8) = 192
+    expect(hco3).toBe(192);
 
     // Minerals unaffected by NaHCO₃ must remain 0.
     const ca = await get_mineral_ppm(page, "mineral-calcium");
@@ -357,7 +357,7 @@ test.describe("Water Chemistry section", () => {
 
     // Add 2 mL of lactic acid (88%). The acid contribution is:
     //   total_meq = 2 * 11.46 = 22.92
-    //   shift = -(22.92 / 20) * 0.05 = -0.0573 pH units
+    //   shift = -(22.92 / 18.93) * 0.05 = -0.0606 pH units
     // The pH must drop measurably below the pre-acid baseline.
     await page.getByTestId("acid-lactic-input").fill("2");
 
@@ -396,21 +396,21 @@ test.describe("Water Chemistry section", () => {
     // Add gypsum and calcium chloride simultaneously. Both contribute Ca;
     // gypsum also adds SO₄ and CaCl₂ also adds Cl.
     //
-    // Gypsum 4 g (20 L):
-    //   Ca  = 232.8 * (4/20) = 46.56
-    //   SO₄ = 558.0 * (4/20) = 111.6
+    // Gypsum 4 g (18.93 L):
+    //   Ca  = 232.8 * (4/18.93) = 49.19
+    //   SO₄ = 558.0 * (4/18.93) = 117.91
     //
-    // Calcium chloride 3 g (20 L):
-    //   Ca = 272.6 * (3/20) = 40.89
-    //   Cl = 482.3 * (3/20) = 72.345
+    // Calcium chloride 3 g (18.93 L):
+    //   Ca = 272.6 * (3/18.93) = 43.20
+    //   Cl = 482.3 * (3/18.93) = 76.44
     //
     // Combined:
-    //   Ca  = 46.56 + 40.89 = 87.45  → Math.round = 87
-    //   SO₄ = 111.6            → Math.round = 112
-    //   Cl  = 72.345           → Math.round = 72
+    //   Ca  = 49.19 + 43.20 = 92.39  → Math.round = 92
+    //   SO₄ = 117.91            → Math.round = 118
+    //   Cl  = 76.44             → Math.round = 76
     //   Mg, Na, HCO₃ = 0
     //
-    // SC ratio = 111.6 / 72.345 ≈ 1.54 → descriptor "hoppy"
+    // SC ratio = 117.91 / 76.44 ≈ 1.54 → descriptor "hoppy"
 
     await page.getByTestId("salt-gypsum-input").fill("4");
     await page.getByTestId("salt-calcium-chloride-input").fill("3");
@@ -430,12 +430,12 @@ test.describe("Water Chemistry section", () => {
     const na = await get_mineral_ppm(page, "mineral-sodium");
     const hco3 = await get_mineral_ppm(page, "mineral-bicarbonate");
 
-    // Combined Ca: Math.round(87.45) = 87
-    expect(ca).toBe(87);
-    // SO₄ from gypsum only: Math.round(111.6) = 112
-    expect(so4).toBe(112);
-    // Cl from CaCl₂ only: Math.round(72.345) = 72
-    expect(cl).toBe(72);
+    // Combined Ca: Math.round(92.39) = 92
+    expect(ca).toBe(92);
+    // SO₄ from gypsum only: Math.round(117.91) = 118
+    expect(so4).toBe(118);
+    // Cl from CaCl₂ only: Math.round(76.44) = 76
+    expect(cl).toBe(76);
     // Uncontributed minerals must be 0.
     expect(mg).toBe(0);
     expect(na).toBe(0);
@@ -449,9 +449,9 @@ test.describe("Water Chemistry section", () => {
     );
 
     // Now add baking soda to verify it combines without disrupting the others.
-    // Baking soda 2 g (20 L):
-    //   Na   = 274.0 * (2/20) = 27.4  → 27
-    //   HCO₃ = 726.0 * (2/20) = 72.6  → 73
+    // Baking soda 2 g (18.93 L):
+    //   Na   = 274.0 * (2/18.93) = 28.95  → 29
+    //   HCO₃ = 726.0 * (2/18.93) = 76.70  → 77
     await page.getByTestId("salt-baking-soda-input").fill("2");
 
     await expect(async () => {
@@ -464,15 +464,15 @@ test.describe("Water Chemistry section", () => {
     const na_after = await get_mineral_ppm(page, "mineral-sodium");
     const hco3_after = await get_mineral_ppm(page, "mineral-bicarbonate");
 
-    // Na: Math.round(27.4) = 27
-    expect(na_after).toBe(27);
-    // HCO₃: Math.round(72.6) = 73
-    expect(hco3_after).toBe(73);
+    // Na: Math.round(28.95) = 29
+    expect(na_after).toBe(29);
+    // HCO₃: Math.round(76.70) = 77
+    expect(hco3_after).toBe(77);
 
     // Ca and SO₄ must be unchanged by baking soda.
     const ca_after = await get_mineral_ppm(page, "mineral-calcium");
     const so4_after = await get_mineral_ppm(page, "mineral-sulfate");
-    expect(ca_after).toBe(87);
-    expect(so4_after).toBe(112);
+    expect(ca_after).toBe(92);
+    expect(so4_after).toBe(118);
   });
 });

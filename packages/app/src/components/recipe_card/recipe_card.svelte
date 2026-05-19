@@ -14,13 +14,12 @@
     srm_to_css_color,
   } from "@trub/calc";
   import type { Recipe, BrewType } from "@trub/types";
+  import { equipment_store } from "../../stores/equipment_store.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
   // ---------------------------------------------------------------------------
 
-  const DEFAULT_BATCH_SIZE_L = 20;
-  const DEFAULT_EFFICIENCY_PCT = 72;
   const DEFAULT_ATTENUATION_PCT = 75;
 
   const BREW_TYPE_LABELS: Record<BrewType, string> = {
@@ -46,6 +45,13 @@
   // Derived stats — always use @trub/calc, never inline math
   // ---------------------------------------------------------------------------
 
+  const card_batch_size = $derived(
+    equipment_store.batch_size_for(recipe.equipment_id),
+  );
+  const card_efficiency = $derived(
+    equipment_store.efficiency_for(recipe.equipment_id),
+  );
+
   const avg_attenuation_pct = $derived(
     recipe.yeast.length > 0
       ? recipe.yeast.reduce((sum, y) => sum + y.attenuation_pct, 0) /
@@ -56,8 +62,8 @@
   const og = $derived(
     calculate_og(
       recipe.fermentables,
-      DEFAULT_BATCH_SIZE_L,
-      DEFAULT_EFFICIENCY_PCT,
+      card_batch_size,
+      card_efficiency,
     ),
   );
 
@@ -71,18 +77,18 @@
 
   const ibu = $derived(
     recipe.ibu_formula === "rager"
-      ? calculate_ibu_rager(recipe.hops, og, DEFAULT_BATCH_SIZE_L)
+      ? calculate_ibu_rager(recipe.hops, og, card_batch_size)
       : recipe.ibu_formula === "mibu"
-        ? calculate_ibu_mibu(recipe.hops, og, DEFAULT_BATCH_SIZE_L)
-        : calculate_ibu_tinseth(recipe.hops, og, DEFAULT_BATCH_SIZE_L),
+        ? calculate_ibu_mibu(recipe.hops, og, card_batch_size)
+        : calculate_ibu_tinseth(recipe.hops, og, card_batch_size),
   );
 
   const srm = $derived(
     recipe.color_formula === "daniels"
-      ? calculate_srm_daniels(recipe.fermentables, DEFAULT_BATCH_SIZE_L)
+      ? calculate_srm_daniels(recipe.fermentables, card_batch_size)
       : recipe.color_formula === "mosher"
-        ? calculate_srm_mosher(recipe.fermentables, DEFAULT_BATCH_SIZE_L)
-        : calculate_srm_morey(recipe.fermentables, DEFAULT_BATCH_SIZE_L),
+        ? calculate_srm_mosher(recipe.fermentables, card_batch_size)
+        : calculate_srm_morey(recipe.fermentables, card_batch_size),
   );
 
   const srm_color = $derived(srm_to_css_color(srm));

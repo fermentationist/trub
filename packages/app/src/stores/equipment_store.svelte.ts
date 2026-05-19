@@ -5,8 +5,8 @@ import { EquipmentRepository } from "../repositories/equipment_repository";
 // Fallback constants
 // ---------------------------------------------------------------------------
 
-const DEFAULT_BATCH_SIZE_L = 18.93; // 5 US gallons
-const DEFAULT_EFFICIENCY_PCT = 72;
+export const DEFAULT_BATCH_SIZE_L = 18.93; // 5 US gallons
+export const DEFAULT_EFFICIENCY_PCT = 72;
 
 // ---------------------------------------------------------------------------
 // Reactive state
@@ -90,6 +90,27 @@ export const equipment_store = {
 
   async get_efficiency(equipment_id: number | null): Promise<number> {
     const profile = await this.get_profile_for_recipe(equipment_id);
+    return profile?.efficiency_pct ?? DEFAULT_EFFICIENCY_PCT;
+  },
+
+  // -------------------------------------------------------------------------
+  // Synchronous lookups — use only after load() has been called
+  // -------------------------------------------------------------------------
+
+  find_profile(equipment_id: number | null): EquipmentProfile | null {
+    if (equipment_id === null) {
+      return default_profile;
+    }
+    return find_in_memory(equipment_id) ?? default_profile;
+  },
+
+  batch_size_for(equipment_id: number | null): number {
+    const profile = this.find_profile(equipment_id);
+    return profile?.batch_size_l ?? DEFAULT_BATCH_SIZE_L;
+  },
+
+  efficiency_for(equipment_id: number | null): number {
+    const profile = this.find_profile(equipment_id);
     return profile?.efficiency_pct ?? DEFAULT_EFFICIENCY_PCT;
   },
 };

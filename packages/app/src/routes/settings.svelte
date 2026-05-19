@@ -2,6 +2,7 @@
   import { settings_store } from "../stores/settings_store.svelte";
   import type { Theme } from "../stores/settings_store.svelte";
   import type { UnitPreferences, FormulaDefaults } from "@trub/types";
+  import EquipmentProfilesSection from "../components/equipment_profiles_section/equipment_profiles_section.svelte";
 
   // ---------------------------------------------------------------------------
   // Lifecycle — load settings on mount
@@ -287,6 +288,13 @@
           {/each}
         </select>
       </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+      Section: Equipment Profiles
+    ----------------------------------------------------------------------- -->
+    <section class="settings-card" data-testid="equipment-settings-section">
+      <EquipmentProfilesSection />
     </section>
 
     <!-- -----------------------------------------------------------------------

@@ -1,0 +1,23 @@
+{
+  "name": "@trub/calc",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@trub/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "^3.x",
+    "typescript": "^5.x",
+    "vitest": "^3.x"
+  }
+}

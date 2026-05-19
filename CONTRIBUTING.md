@@ -1,4 +1,3 @@
-
 # Contributing Guide
 
 Thank you for contributing to this project. This document defines the **standards, expectations, and development philosophy** that all contributors are expected to follow.
@@ -21,7 +20,7 @@ All contributions should align with the following principles:
 - **Local-first by default**, aligned with the principles described here:  
   https://www.inkandswitch.com/essay/local-first/#seven-ideals-for-local-first-software
 
-When in doubt, optimize for *long‑term readability and maintainability*.
+When in doubt, optimize for _long‑term readability and maintainability_.
 
 ---
 
@@ -31,34 +30,39 @@ When in doubt, optimize for *long‑term readability and maintainability*.
 - Always default to the **latest stable versions** of tools and libraries
 - Prefer **open standards** when available
 - Minimize dependencies; do not introduce libraries without a clear, documented need
-- Shared client functionality should be implemented via **reusable hooks**
+- Shared client functionality should be implemented via **reusable stores and utilities**
 
 ---
 
-## Formatting & Linting
+## Code Style
 
-This project enforces formatting and linting via **Prettier** and **ESLint**.
+All code must comply with the project's Prettier + ESLint config. **Always run `pnpm lint` after writing or editing code** and fix any warnings or errors before committing.
 
-### Prettier Defaults
+### Prettier (`.prettierrc.json`)
 
-- 2-space indentation
-- Semicolons required
-- Double quotes for strings
-- Trailing commas where valid in ES5
-- Line endings handled automatically
+- **Double quotes** — `singleQuote: false` (use `"`, not `'`)
+- **Semicolons** — always required
+- **2-space indentation**
+- **Trailing commas** — ES5 style (objects, arrays, function params)
+- **Line endings** — `endOfLine: "auto"` (CRLF on Windows, LF on Unix)
 
-### ESLint Expectations (Highlights)
+### ESLint rules (enforced)
 
-- **`var` is forbidden** — no exceptions
-- Use `const` by default; `let` only when reassignment is required
-- **No loose equality (`==`)** — always use `===`
-- Conditionals **must always use blocks** (`{}`)
-- Prefer immutability and `prefer-const`
-- Avoid unused variables; intentionally unused values must be prefixed with `_`
-- `any` should be avoided and will trigger warnings
-- Avoid unnecessary boolean casts, unsafe patterns, and escape sequences
+- `prefer-const` — always use `const`; only use `let` when reassignment is needed. **Never `var`.**
+- `eqeqeq` — always use `===` / `!==`, never `==` / `!=`
+- `curly: "all"` — always use braces for `if`/`else`/`for`/`while` bodies, even single-line
+- `no-unused-vars` — prefix unused variables with `_` to suppress (e.g., `_unused`)
+- `@typescript-eslint/no-explicit-any` — avoid `any`; use proper types or `unknown`
+- `no-undefined` — do not reference `undefined` directly; use optional chaining or type narrowing
 
 If a lint rule conflicts with personal preference, **the rule wins**.
+
+### TypeScript (`tsconfig.json`)
+
+- `strict: true` — all strict checks enabled
+- `noImplicitAny` — all parameters and return types must be typed
+- `noUnusedLocals` — no unused local variables (prefix with `_` if needed)
+- `noImplicitReturns` — all code paths must return a value in typed functions
 
 ---
 
@@ -67,7 +71,7 @@ If a lint rule conflicts with personal preference, **the rule wins**.
 - **kebab-case is forbidden** unless there is a compelling technical reason
 - Use `snake_case` for file names
 - Use `SCREAMING_SNAKE_CASE` for constants
-- Avoid repeated “magic numbers” and strings  
+- Avoid repeated “magic numbers” and strings
   - Extract them into named constants under `lib/constants/`
   - Organize constants by domain, API, or functional category
 
@@ -105,7 +109,7 @@ A change without tests is considered incomplete.
 - Update documentation whenever changes require it
 - Add **concise, high-value comments**:
   - Explain architecture, intent, and non-obvious decisions
-  - Do *not* comment obvious code or every variable
+  - Do _not_ comment obvious code or every variable
 
 Comments should **reduce cognitive load**, not add noise.
 
@@ -116,6 +120,25 @@ Comments should **reduce cognitive load**, not add noise.
 - Prefer **reusable, configurable components** over multiple bespoke ones
 - Favor minimal, functional designs over decorative or over-engineered solutions
 - Avoid skeuomorphism, even if it becomes fashionable again
+
+---
+
+## Design System & Tokens
+
+Trub's UI is built on a design system produced by **claude.ai/design**. All visual styling must go through that system.
+
+- **Use design tokens for every visual value** — color, spacing, typography, border radius, shadow, and animation duration. Never hardcode these values.
+- Token names live in CSS custom properties (e.g., `var(--color-surface)`, `var(--spacing-md)`). Use them everywhere; do not inline hex codes, pixel values, or raw font sizes.
+- The app will eventually expose a user-configurable theme system that maps to these tokens. Any hardcoded value bypasses that system and is considered a bug.
+- When you need a value that has no existing token, raise it — do not invent a one-off value. New tokens should be added to the design system deliberately.
+
+---
+
+## Utility Functions
+
+- **Before writing a new utility function, search for an existing one.** Check `packages/app/src/lib/` and `packages/calc/src/` before implementing anything new.
+- If a near-match exists but doesn't cover your case, extend it — do not create a parallel function.
+- If a genuinely new utility is needed, place it in the correct package (`@trub/calc` for pure calculations, `packages/app/src/lib/` for app-level helpers) and export it for reuse.
 
 ---
 

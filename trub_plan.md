@@ -1,6 +1,6 @@
 # Trub — Project Plan
 
-*April 2026 — Living document. Update as decisions are made and implementation progresses.*
+_April 2026 — Living document. Update as decisions are made and implementation progresses._
 
 ---
 
@@ -10,7 +10,7 @@ Trub is a local-first homebrewing recipe designer and water chemistry calculator
 It targets homebrewers who want modern, polished software without cloud lock-in, subscription
 gates, or black-box calculations.
 
-**Tech stack:** Svelte + TypeScript + Vite + Dexie.js (IndexedDB)
+**Tech stack:** Svelte 5 + TypeScript + Vite + svelte-spa-router + Dexie.js (IndexedDB)
 
 **v1 ships:** Recipe designer, water chemistry calculator, formula choice and documentation,
 BeerXML import/export, local storage, dark mode, responsive design.
@@ -26,7 +26,7 @@ Trub's differentiator — **local-first + transparent/editable formulas** — ha
 competitor. The specific value propositions:
 
 1. **Nothing is hidden.** Every calculation is documented and formula choice is user-configurable.
-   The daily-use expression is formula *choice* (switch IBU methods, watch the number change).
+   The daily-use expression is formula _choice_ (switch IBU methods, watch the number change).
    The deeper expression is that all math is open and documented.
 2. **Local-first with zero friction.** No signup, no account, no cloud. Open the app, start
    designing. Data lives on your device. Export whenever.
@@ -52,6 +52,7 @@ trub/
 ```
 
 **Key rules:**
+
 - `@trub/types` has zero dependencies — interfaces and enums only.
 - `@trub/calc` depends only on `@trub/types`. Every function is pure: inputs in, result out.
 - `@trub/app` imports from both; neither package imports from `app`.
@@ -79,6 +80,7 @@ both get full end-to-end type safety with zero code generation. Change a type in
 and both clients fail at compile time if something breaks.
 
 Sync router procedures:
+
 ```
 auth.create_token   — generate a sync token for a device
 auth.verify         — verify a token is valid
@@ -91,6 +93,7 @@ Transport: HTTP (matches push/pull polling). tRPC WebSocket subscriptions are av
 realtime sync is needed later — no architecture change required.
 
 Implementation details:
+
 - Add `updated_at` and `sync_version` fields to each Dexie table
 - Server storage: SQLite/Postgres (or Cloudflare Worker + D1)
 - Conflict resolution: Last-Writer-Wins by `updated_at` (sufficient for single-writer)
@@ -148,6 +151,7 @@ interface Recipe {
 ```
 
 **Design rationale:**
+
 - Recipes embed ingredient entries rather than referencing the ingredient DB by ID. Recipes are
   self-contained, portable, and safe from ingredient DB updates changing historical data.
 - Profiles are snapshotted into the recipe at save time.
@@ -162,33 +166,33 @@ interface Recipe {
 All values are converted to canonical units before writing to Dexie. Canonical units are the
 BeerXML standard for most dimensions.
 
-| Dimension        | Canonical Unit        | Notes                                       |
-|------------------|-----------------------|---------------------------------------------|
-| Volume           | liters (L)            |                                             |
-| Weight           | kilograms (kg)        |                                             |
-| Temperature      | Celsius (°C)          |                                             |
-| Time             | minutes               |                                             |
-| Color            | SRM                   |                                             |
-| Gravity          | specific gravity (SG) |                                             |
-| Pressure         | kPa                   |                                             |
-| Evaporation rate | L/hr                  | Volume rate — NOT percentage (see below)    |
+| Dimension        | Canonical Unit        | Notes                                    |
+| ---------------- | --------------------- | ---------------------------------------- |
+| Volume           | liters (L)            |                                          |
+| Weight           | kilograms (kg)        |                                          |
+| Temperature      | Celsius (°C)          |                                          |
+| Time             | minutes               |                                          |
+| Color            | SRM                   |                                          |
+| Gravity          | specific gravity (SG) |                                          |
+| Pressure         | kPa                   |                                          |
+| Evaporation rate | L/hr                  | Volume rate — NOT percentage (see below) |
 
 ### Unit Preference Categories
 
 Users configure display units at a granular per-category level, not just "metric vs imperial":
 
-| Category     | Key            | Available Units       | Notes                        |
-|--------------|----------------|-----------------------|------------------------------|
-| Batch volume | `BATCH_VOLUME` | gal (US), L           | Main recipe volumes          |
-| Small volume | `SMALL_VOLUME` | mL, tsp, tbsp, fl oz  | Water additions, acids       |
-| Grain weight | `GRAIN_WEIGHT` | lb+oz, kg             | Fermentables                 |
-| Hop weight   | `HOP_WEIGHT`   | oz, g                 | Never lb or kg               |
-| Misc weight  | `MISC_WEIGHT`  | g, oz, tsp            | Finings, spices, salts       |
-| Temperature  | `TEMPERATURE`  | °F, °C                |                              |
-| Gravity      | `GRAVITY`      | SG (1.0xx), Plato     | Non-linear conversion        |
-| Color        | `COLOR`        | SRM, EBC, Lovibond    | Non-linear conversion        |
-| Pressure     | `PRESSURE`     | PSI, kPa, bar         | Carbonation (v1.1+)          |
-| Evap rate    | `EVAP_RATE`    | gal/hr, L/hr          | Volume rate — never %        |
+| Category     | Key            | Available Units      | Notes                  |
+| ------------ | -------------- | -------------------- | ---------------------- |
+| Batch volume | `BATCH_VOLUME` | gal (US), L          | Main recipe volumes    |
+| Small volume | `SMALL_VOLUME` | mL, tsp, tbsp, fl oz | Water additions, acids |
+| Grain weight | `GRAIN_WEIGHT` | lb+oz, kg            | Fermentables           |
+| Hop weight   | `HOP_WEIGHT`   | oz, g                | Never lb or kg         |
+| Misc weight  | `MISC_WEIGHT`  | g, oz, tsp           | Finings, spices, salts |
+| Temperature  | `TEMPERATURE`  | °F, °C               |                        |
+| Gravity      | `GRAVITY`      | SG (1.0xx), Plato    | Non-linear conversion  |
+| Color        | `COLOR`        | SRM, EBC, Lovibond   | Non-linear conversion  |
+| Pressure     | `PRESSURE`     | PSI, kPa, bar        | Carbonation (v1.1+)    |
+| Evap rate    | `EVAP_RATE`    | gal/hr, L/hr         | Volume rate — never %  |
 
 ### Inline Unit Override
 
@@ -198,6 +202,7 @@ per-recipe on the recipe document (`display_unit_overrides: Partial<UnitPreferen
 recipe remembers its own display units across sessions.
 
 **Data flow:**
+
 ```
 User types a value
   → UnitValue component converts display → canonical
@@ -253,7 +258,7 @@ Single vertically-scrolling page. Layout top to bottom:
 4. **Fermentables** — collapsible card, "+" to search/add, rows show name/amount/%/color dot,
    drag to reorder, swipe-to-delete mobile / X button desktop
 5. **Hops** — same pattern, rows show name/amount/AA%/time/use
-6. **Yeast** — name, attenuation %, temp range, flocculation, pitch rate calculator shortcut
+6. **Yeast** — name, attenuation %, temp range, flocculation
 7. **Misc** — free-form entries: name, amount, time, use stage
 8. **Mash Schedule** — step table with strike water calculator, pre-filled from equipment profile
 9. **Fermentation Schedule** — step table: name, temp, duration
@@ -282,12 +287,12 @@ Integrated into the recipe designer as a dedicated section — not a separate pa
 Settings → Calculations page shows each formula with a plain-English description and a link to
 full documentation with the actual math.
 
-| Calculation | Options               | Default  |
-|-------------|-----------------------|----------|
-| IBU         | Tinseth, Rager, mIBU  | Tinseth  |
-| Color (SRM) | Morey, Daniels, Mosher| Morey    |
-| ABV         | Simple, Alternate     | Simple   |
-| Mash pH     | Simplified Kaiser     | Kaiser   |
+| Calculation | Options                | Default     |
+| ----------- | ---------------------- | ----------- |
+| IBU         | Tinseth, Rager, mIBU   | Tinseth     |
+| Color (SRM) | Morey, Daniels, Mosher | Morey       |
+| ABV         | Simple, Alternate      | Simple      |
+| Mash pH     | Bru'n Water, Kaiser    | Bru'n Water |
 
 Formula choice is per-recipe. Global default only affects new recipes.
 
@@ -357,8 +362,8 @@ export BeerXML/PDF.
 - **Ingredient sections:** Collapsible cards, "+" to search/add, inline table editing,
   drag-to-reorder
 - **Dark mode as default**
-- **Navigation:** Sidebar on desktop (Recipes / Brew Sessions / Inventory / Settings), bottom
-  tabs on mobile
+- **Navigation:** Sidebar on desktop (Recipes / Settings), bottom tabs on mobile. Brew Sessions
+  and Inventory nav items are deferred to v1.1 — no stub entries in v1.
 - **Formula controls in settings, not in the recipe designer.** Formula is exposed as a small
   label under each stat value linking to settings — not as inline controls.
 - **Color preview:** Filled glass/vessel icon that updates with estimated SRM color
@@ -376,7 +381,7 @@ export BeerXML/PDF.
 - SRM: Morey `SRM = 1.4922 × MCU^0.6859`
 - Strike water temp and volume
 - Pre-boil gravity and boil-off
-- Mash pH: simplified Kaiser/Bru'n Water model
+- Mash pH: Bru'n Water model (default) and Kaiser model (user-selectable)
 - Water mineral additions (salt → ion contribution by weight)
 - Sulfate-to-chloride ratio
 
@@ -384,29 +389,65 @@ export BeerXML/PDF.
 
 ## Deferred Features
 
-| Feature                    | Target  |
-|----------------------------|---------|
-| Batch tracking             | v1.1    |
-| Brew timer                 | v1.1    |
-| Inventory management       | v1.1    |
-| Shopping list              | v1.1    |
-| Cost tracking              | v1.1    |
-| Cloud sync (DIY server)    | v1.2    |
-| MCP server                 | v1.2+   |
-| Recipe versioning          | v1.2    |
-| Community recipe library   | v2.0    |
-| Device integrations        | v2.0    |
-| Wine/mead/cider/seltzer    | v2.0    |
-| Commercial brewing         | v2.0+   |
-| Plugin/extension system    | v2.0+   |
+| Feature                  | Target |
+| ------------------------ | ------ |
+| Batch tracking           | v1.1   |
+| Brew timer               | v1.1   |
+| Inventory management     | v1.1   |
+| Shopping list            | v1.1   |
+| Cost tracking            | v1.1   |
+| Cloud sync (DIY server)  | v1.2   |
+| MCP server               | v1.2+  |
+| Recipe versioning        | v1.2   |
+| Pitch rate calculator    | v2.0   |
+| Community recipe library | v2.0   |
+| Device integrations      | v2.0   |
+| Wine/mead/cider/seltzer  | v2.0   |
+| Commercial brewing       | v2.0+  |
+| Plugin/extension system  | v2.0+  |
+
+---
+
+## Resolved Decisions
+
+| Question                    | Decision                                                                                                                                                                                           |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Pitch rate calculator scope | Deferred to v2.0. No shortcut in v1 yeast section.                                                                                                                                                 |
+| PDF brew sheet format       | Styled layout (not a plain text dump).                                                                                                                                                             |
+| Ingredient DB sourcing      | Scrape and clean BeerXML community databases.                                                                                                                                                      |
+| Mash pH model               | Bru'n Water as default, Kaiser as user-selectable option.                                                                                                                                          |
+| Storage/sync                | Dexie.js local-only for v1; DIY tRPC sync server in v1.2.                                                                                                                                          |
+| Undo/redo strategy          | Snapshot-based, in-memory history stack in a Svelte store. Push recipe state before each debounced save; Ctrl+Z pops and writes back to Dexie. Stack does not survive page refresh — session-only. |
+| Routing                     | svelte-spa-router (hash-based). TanStack Router has no Svelte adapter. Hash routing is ideal for offline PWA — no server fallback needed.                                                          |
+| Settings page structure     | Single `/settings` route with internal tabs (Units, Calculations, Equipment, Water Profiles, Appearance, Data). Not sub-routes.                                                                    |
+
+---
+
+## Implementation Phasing
+
+Feature-vertical: build one calculation end-to-end (type → calc → test → component → E2E) before
+starting the next. This surfaces integration issues early and produces a demoable app faster.
+
+| Phase | Scope                                                                                                                     |
+| ----- | ------------------------------------------------------------------------------------------------------------------------- |
+| 0     | Scaffold monorepo (root tooling, package skeletons, dev pipeline)                                                         |
+| 1     | Types + Dexie schema + repository layer skeleton                                                                          |
+| 2     | OG/FG/ABV vertical (fermentable types → calc → unit tests → recipe designer fermentables section → stats dashboard → E2E) |
+| 3     | IBU vertical (hop types → calc → hops section → IBU stat)                                                                 |
+| 4     | SRM/Color vertical (color calc → color preview → SRM stat)                                                                |
+| 5     | Water chemistry vertical (water profiles → salt additions → mash pH with Bru'n Water + Kaiser)                            |
+| 6     | Ingredient database (seed data scraping, search/autocomplete)                                                             |
+| 7     | Equipment profiles, mash schedule, fermentation schedule                                                                  |
+| 8     | BeerXML import/export                                                                                                     |
+| 9     | Settings, recipe management (list/filter/search), PDF export                                                              |
+| 10    | PWA shell (Service Worker, manifest, install prompt)                                                                      |
 
 ---
 
 ## Open Questions
 
-1. **Pitch rate calculator scope for v1:** Include basic pitch rate calculator in v1 or defer?
-2. **PDF brew sheet format:** Simple text dump or designed layout?
-3. **Ingredient DB sourcing:** Where to get seed data? BeerXML community databases need cleaning.
-4. **Mash pH model complexity:** How simplified should the v1 Kaiser implementation be?
-5. **Sync server design (v1.2):** Self-host only vs. free managed instance? Auth mechanism?
-   REST vs. WebSocket?
+1. **Sync server design (v1.2):** Self-host only vs. free managed instance? Auth mechanism?
+   REST vs. WebSocket? _(Deferred — not blocking v1.)_
+2. **Design tokens:** Must be generated via claude.ai/design before UI implementation begins.
+   Token file will live at `packages/app/src/app.css`. Scaffold includes a placeholder with the
+   required token categories; replace with real values from the design tool before building components.

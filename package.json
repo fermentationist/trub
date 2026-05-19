@@ -1,0 +1,30 @@
+{
+  "name": "trub-monorepo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "pnpm --filter @trub/app build",
+    "dev": "pnpm --filter @trub/app dev",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "type-check": "pnpm -r type-check",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.x",
+    "eslint": "^9.x",
+    "eslint-config-prettier": "^10.x",
+    "eslint-plugin-svelte": "^2.x",
+    "globals": "^15.x",
+    "prettier": "^3.x",
+    "prettier-plugin-svelte": "^3.x",
+    "typescript": "^5.x",
+    "typescript-eslint": "^8.x"
+  },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

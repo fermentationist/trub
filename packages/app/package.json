@@ -1,0 +1,32 @@
+{
+  "name": "@trub/app",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest run && playwright test",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "type-check": "svelte-check --tsconfig ./tsconfig.json",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "@trub/calc": "workspace:*",
+    "@trub/types": "workspace:*",
+    "dexie": "^4.x",
+    "svelte-spa-router": "^5.x"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.x",
+    "@sveltejs/vite-plugin-svelte": "^5.x",
+    "svelte": "^5.x",
+    "svelte-check": "^4.x",
+    "typescript": "^5.x",
+    "vite": "^6.x",
+    "vite-plugin-pwa": "^0.x",
+    "vitest": "^3.x"
+  }
+}

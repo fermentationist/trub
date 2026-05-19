@@ -1,0 +1,19 @@
+{
+  "name": "@trub/types",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "type-check": "tsc --noEmit",
+    "lint": "eslint src"
+  },
+  "dependencies": {
+    "zod": "^3.x"
+  },
+  "devDependencies": {
+    "typescript": "^5.x"
+  }
+}

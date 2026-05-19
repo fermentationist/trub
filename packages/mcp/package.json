@@ -1,0 +1,11 @@
+{
+  "name": "@trub/mcp",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "MCP server exposing recipe tools (v1.2+, requires sync)",
+  "dependencies": {
+    "@trub/calc": "workspace:*",
+    "@trub/types": "workspace:*"
+  }
+}

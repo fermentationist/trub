@@ -1,0 +1,10 @@
+{
+  "name": "@trub/sync-server",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "description": "Self-hosted tRPC sync server (v1.2)",
+  "dependencies": {
+    "@trub/types": "workspace:*"
+  }
+}

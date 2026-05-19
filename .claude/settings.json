@@ -1,0 +1,47 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash(git commit*)",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cd /Users/fermentationist/Local_repositories/claude_projects/trub && STAGED=$(git diff --cached --name-only) && echo '--- pre-commit: lint ---' && pnpm lint 2>&1 && echo '--- pre-commit: type-check ---' && pnpm type-check 2>&1 && if echo \"$STAGED\" | grep -q 'packages/calc/'; then echo '--- pre-commit: @trub/calc unit tests ---' && pnpm --filter @trub/calc test; fi && if echo \"$STAGED\" | grep -qE 'packages/app/src/(lib|stores|repositories)/'; then echo '--- pre-commit: @trub/app unit tests ---' && pnpm --filter @trub/app test:unit; fi"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "FILE=$(echo \"$CLAUDE_TOOL_INPUT\" | jq -r '.file_path // empty'); if echo \"$FILE\" | grep -qE 'packages/calc/src/[^_].*\\.ts$'; then echo 'AGENT REMINDER: @trub/calc file written. Delegate test writing to the unit-test-writer agent.'; elif echo \"$FILE\" | grep -qE '\\.(svelte)$'; then echo 'AGENT REMINDER: Svelte file written. Use code-reviewer before committing.'; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Reminder: use code-reviewer before committing, marvin after implementing security-sensitive features, and unit-test-writer for any new @trub/calc functions.'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(pnpm *)",
+      "Bash(git status)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add *)",
+      "Bash(git commit*)"
+    ]
+  }
+}

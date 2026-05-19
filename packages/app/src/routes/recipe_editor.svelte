@@ -2,9 +2,10 @@
   import { recipe_store } from "../stores/recipe_store.svelte";
   import FermentablesSection from "../components/fermentables_section/fermentables_section.svelte";
   import HopsSection from "../components/hops_section/hops_section.svelte";
+  import YeastSection from "../components/yeast_section/yeast_section.svelte";
   import WaterChemistrySection from "../components/water_chemistry_section/water_chemistry_section.svelte";
   import StatsDashboard from "../components/stats_dashboard/stats_dashboard.svelte";
-  import type { FermentableEntry, HopEntry, WaterAdjustment } from "@trub/types";
+  import type { FermentableEntry, HopEntry, YeastEntry, WaterAdjustment } from "@trub/types";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -94,6 +95,18 @@
 
   function handle_update_hop(index: number, entry: HopEntry): void {
     recipe_store.update_hop(index, entry);
+  }
+
+  function handle_add_yeast(entry: YeastEntry): void {
+    recipe_store.add_yeast(entry);
+  }
+
+  function handle_remove_yeast(index: number): void {
+    recipe_store.remove_yeast(index);
+  }
+
+  function handle_update_yeast(index: number, entry: YeastEntry): void {
+    recipe_store.update_yeast(index, entry);
   }
 
   function handle_update_water_adjustments(adjustments: WaterAdjustment): void {
@@ -206,6 +219,16 @@
         onadd={handle_add_hop}
         onremove={handle_remove_hop}
         onupdate={handle_update_hop}
+      />
+    </div>
+
+    <!-- Yeast -->
+    <div class="section-row" data-testid="yeast-section-row">
+      <YeastSection
+        yeast={recipe.yeast}
+        onadd={handle_add_yeast}
+        onremove={handle_remove_yeast}
+        onupdate={handle_update_yeast}
       />
     </div>
 

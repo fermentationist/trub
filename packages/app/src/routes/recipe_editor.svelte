@@ -179,6 +179,7 @@
         efficiency_pct={DEFAULT_EFFICIENCY_PCT}
         abv_formula={recipe.abv_formula}
         ibu_formula={recipe.ibu_formula}
+        color_formula={recipe.color_formula}
       />
     </div>
 

@@ -7,6 +7,10 @@
     calculate_ibu_tinseth,
     calculate_ibu_rager,
     calculate_ibu_mibu,
+    calculate_srm_morey,
+    calculate_srm_daniels,
+    calculate_srm_mosher,
+    srm_to_css_color,
   } from "@trub/calc";
   import type {
     FermentableEntry,
@@ -14,6 +18,7 @@
     AbvFormula,
     HopEntry,
     IbuFormula,
+    ColorFormula,
   } from "@trub/types";
 
   const DEFAULT_ATTENUATION_PCT = 75;
@@ -26,6 +31,7 @@
     efficiency_pct: number;
     abv_formula: AbvFormula;
     ibu_formula: IbuFormula;
+    color_formula: ColorFormula;
   }
 
   const {
@@ -36,6 +42,7 @@
     efficiency_pct,
     abv_formula,
     ibu_formula,
+    color_formula,
   }: Props = $props();
 
   // Derive average attenuation from all yeast entries; fall back to default when
@@ -64,6 +71,16 @@
         : calculate_ibu_tinseth(hops, og, batch_size_l),
   );
 
+  const srm = $derived(
+    color_formula === "daniels"
+      ? calculate_srm_daniels(fermentables, batch_size_l)
+      : color_formula === "mosher"
+        ? calculate_srm_mosher(fermentables, batch_size_l)
+        : calculate_srm_morey(fermentables, batch_size_l),
+  );
+
+  const beer_color = $derived(srm_to_css_color(srm));
+
   // Formatting helpers keep display logic out of the template.
   function format_gravity(value: number): string {
     return value.toFixed(3);
@@ -74,6 +91,10 @@
   }
 
   function format_ibu(value: number): string {
+    return value.toFixed(1);
+  }
+
+  function format_srm(value: number): string {
     return value.toFixed(1);
   }
 </script>
@@ -97,6 +118,18 @@
   <div class="stat_box" data-testid="stat-box-ibu">
     <span class="stat_label" data-testid="stat-label-ibu">IBU</span>
     <span class="stat_value" data-testid="stat-ibu-value">{format_ibu(ibu)}</span>
+  </div>
+
+  <div class="stat_box" data-testid="stat-box-srm">
+    <span class="stat_label" data-testid="stat-label-srm">SRM</span>
+    <div class="srm_display">
+      <span class="stat_value" data-testid="stat-srm-value">{format_srm(srm)}</span>
+      <span
+        class="color_swatch"
+        data-testid="color-swatch"
+        style="background-color: {beer_color}"
+      ></span>
+    </div>
   </div>
 </section>
 
@@ -136,5 +169,20 @@
     font-weight: var(--font-weight-bold);
     color: var(--color-text-primary);
     line-height: var(--line-height-tight);
+  }
+
+  .srm_display {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+  }
+
+  .color_swatch {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    flex-shrink: 0;
   }
 </style>

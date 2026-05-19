@@ -4,9 +4,19 @@
   import HopsSection from "../components/hops_section/hops_section.svelte";
   import YeastSection from "../components/yeast_section/yeast_section.svelte";
   import MiscSection from "../components/misc_section/misc_section.svelte";
+  import MashScheduleSection from "../components/mash_schedule_section/mash_schedule_section.svelte";
+  import FermentationScheduleSection from "../components/fermentation_schedule_section/fermentation_schedule_section.svelte";
   import WaterChemistrySection from "../components/water_chemistry_section/water_chemistry_section.svelte";
   import StatsDashboard from "../components/stats_dashboard/stats_dashboard.svelte";
-  import type { FermentableEntry, HopEntry, YeastEntry, MiscEntry, WaterAdjustment } from "@trub/types";
+  import type {
+    FermentableEntry,
+    HopEntry,
+    YeastEntry,
+    MiscEntry,
+    MashStep,
+    FermentationStep,
+    WaterAdjustment,
+  } from "@trub/types";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -120,6 +130,38 @@
 
   function handle_update_misc(index: number, entry: MiscEntry): void {
     recipe_store.update_misc(index, entry);
+  }
+
+  function handle_add_mash_step(step: MashStep): void {
+    recipe_store.add_mash_step(step);
+  }
+
+  function handle_remove_mash_step(index: number): void {
+    recipe_store.remove_mash_step(index);
+  }
+
+  function handle_update_mash_step(index: number, step: MashStep): void {
+    recipe_store.update_mash_step(index, step);
+  }
+
+  function handle_add_fermentation_step(step: FermentationStep): void {
+    recipe_store.add_fermentation_step(step);
+  }
+
+  function handle_remove_fermentation_step(index: number): void {
+    recipe_store.remove_fermentation_step(index);
+  }
+
+  function handle_update_fermentation_step(
+    index: number,
+    step: FermentationStep,
+  ): void {
+    recipe_store.update_fermentation_step(index, step);
+  }
+
+  function handle_notes_input(e: Event): void {
+    const value = (e.target as HTMLTextAreaElement).value;
+    recipe_store.update("notes", value);
   }
 
   function handle_update_water_adjustments(adjustments: WaterAdjustment): void {
@@ -255,6 +297,26 @@
       />
     </div>
 
+    <!-- Mash Schedule -->
+    <div class="section-row" data-testid="mash-schedule-section-row">
+      <MashScheduleSection
+        mash_schedule={recipe.mash_schedule}
+        onadd={handle_add_mash_step}
+        onremove={handle_remove_mash_step}
+        onupdate={handle_update_mash_step}
+      />
+    </div>
+
+    <!-- Fermentation Schedule -->
+    <div class="section-row" data-testid="fermentation-schedule-section-row">
+      <FermentationScheduleSection
+        fermentation_schedule={recipe.fermentation_schedule}
+        onadd={handle_add_fermentation_step}
+        onremove={handle_remove_fermentation_step}
+        onupdate={handle_update_fermentation_step}
+      />
+    </div>
+
     <!-- Water Chemistry -->
     <div class="section-row" data-testid="water-chemistry-section-row">
       <WaterChemistrySection
@@ -264,6 +326,21 @@
         mash_ph_formula={recipe.mash_ph_formula}
         onupdate_adjustments={handle_update_water_adjustments}
       />
+    </div>
+
+    <!-- Notes -->
+    <div class="section-row" data-testid="notes-section-row">
+      <section class="notes-section" data-testid="notes-section">
+        <h2 class="notes-title">Notes</h2>
+        <textarea
+          class="notes-textarea"
+          data-testid="notes-textarea"
+          aria-label="Recipe notes"
+          placeholder="Brew day notes, observations, ideas…"
+          value={recipe.notes}
+          oninput={handle_notes_input}
+        ></textarea>
+      </section>
     </div>
   {/if}
 </div>
@@ -416,5 +493,49 @@
   .section-row {
     display: flex;
     flex-direction: column;
+  }
+
+  /* ---------------------------------------------------------------------------
+    Notes section
+  --------------------------------------------------------------------------- */
+
+  .notes-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .notes-title {
+    margin: 0;
+    font-size: var(--font-size-lg);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text-primary);
+  }
+
+  .notes-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: var(--spacing-md);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    line-height: var(--line-height-relaxed);
+    resize: vertical;
+    outline: none;
+    transition:
+      border-color var(--duration-fast) var(--easing-base),
+      box-shadow var(--duration-fast) var(--easing-base);
+  }
+
+  .notes-textarea:hover {
+    border-color: var(--color-accent);
+  }
+
+  .notes-textarea:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 25%, transparent);
   }
 </style>

@@ -4,6 +4,8 @@ import type {
   HopEntry,
   YeastEntry,
   MiscEntry,
+  MashStep,
+  FermentationStep,
 } from "@trub/types";
 import { DEFAULT_FORMULAS } from "@trub/types";
 import { RecipeRepository } from "../repositories/recipe_repository";
@@ -288,6 +290,56 @@ export const recipe_store = {
   update_misc(index: number, entry: MiscEntry): void {
     mutate((recipe) => {
       recipe.misc = recipe.misc.map((m, i) => (i === index ? entry : m));
+    });
+  },
+
+  // -------------------------------------------------------------------------
+  // Mash schedule helpers
+  // -------------------------------------------------------------------------
+
+  add_mash_step(step: MashStep): void {
+    mutate((recipe) => {
+      recipe.mash_schedule = [...recipe.mash_schedule, step];
+    });
+  },
+
+  remove_mash_step(index: number): void {
+    mutate((recipe) => {
+      recipe.mash_schedule = recipe.mash_schedule.filter((_, i) => i !== index);
+    });
+  },
+
+  update_mash_step(index: number, step: MashStep): void {
+    mutate((recipe) => {
+      recipe.mash_schedule = recipe.mash_schedule.map((s, i) =>
+        i === index ? step : s,
+      );
+    });
+  },
+
+  // -------------------------------------------------------------------------
+  // Fermentation schedule helpers
+  // -------------------------------------------------------------------------
+
+  add_fermentation_step(step: FermentationStep): void {
+    mutate((recipe) => {
+      recipe.fermentation_schedule = [...recipe.fermentation_schedule, step];
+    });
+  },
+
+  remove_fermentation_step(index: number): void {
+    mutate((recipe) => {
+      recipe.fermentation_schedule = recipe.fermentation_schedule.filter(
+        (_, i) => i !== index,
+      );
+    });
+  },
+
+  update_fermentation_step(index: number, step: FermentationStep): void {
+    mutate((recipe) => {
+      recipe.fermentation_schedule = recipe.fermentation_schedule.map((s, i) =>
+        i === index ? step : s,
+      );
     });
   },
 

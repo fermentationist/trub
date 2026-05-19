@@ -3,9 +3,10 @@
   import FermentablesSection from "../components/fermentables_section/fermentables_section.svelte";
   import HopsSection from "../components/hops_section/hops_section.svelte";
   import YeastSection from "../components/yeast_section/yeast_section.svelte";
+  import MiscSection from "../components/misc_section/misc_section.svelte";
   import WaterChemistrySection from "../components/water_chemistry_section/water_chemistry_section.svelte";
   import StatsDashboard from "../components/stats_dashboard/stats_dashboard.svelte";
-  import type { FermentableEntry, HopEntry, YeastEntry, WaterAdjustment } from "@trub/types";
+  import type { FermentableEntry, HopEntry, YeastEntry, MiscEntry, WaterAdjustment } from "@trub/types";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -107,6 +108,18 @@
 
   function handle_update_yeast(index: number, entry: YeastEntry): void {
     recipe_store.update_yeast(index, entry);
+  }
+
+  function handle_add_misc(entry: MiscEntry): void {
+    recipe_store.add_misc(entry);
+  }
+
+  function handle_remove_misc(index: number): void {
+    recipe_store.remove_misc(index);
+  }
+
+  function handle_update_misc(index: number, entry: MiscEntry): void {
+    recipe_store.update_misc(index, entry);
   }
 
   function handle_update_water_adjustments(adjustments: WaterAdjustment): void {
@@ -229,6 +242,16 @@
         onadd={handle_add_yeast}
         onremove={handle_remove_yeast}
         onupdate={handle_update_yeast}
+      />
+    </div>
+
+    <!-- Misc -->
+    <div class="section-row" data-testid="misc-section-row">
+      <MiscSection
+        misc={recipe.misc}
+        onadd={handle_add_misc}
+        onremove={handle_remove_misc}
+        onupdate={handle_update_misc}
       />
     </div>
 

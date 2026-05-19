@@ -2,8 +2,9 @@
   import { recipe_store } from "../stores/recipe_store.svelte";
   import FermentablesSection from "../components/fermentables_section/fermentables_section.svelte";
   import HopsSection from "../components/hops_section/hops_section.svelte";
+  import WaterChemistrySection from "../components/water_chemistry_section/water_chemistry_section.svelte";
   import StatsDashboard from "../components/stats_dashboard/stats_dashboard.svelte";
-  import type { FermentableEntry, HopEntry } from "@trub/types";
+  import type { FermentableEntry, HopEntry, WaterAdjustment } from "@trub/types";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -93,6 +94,10 @@
 
   function handle_update_hop(index: number, entry: HopEntry): void {
     recipe_store.update_hop(index, entry);
+  }
+
+  function handle_update_water_adjustments(adjustments: WaterAdjustment): void {
+    recipe_store.update("water_adjustments", adjustments);
   }
 
   function handle_undo(): void {
@@ -201,6 +206,17 @@
         onadd={handle_add_hop}
         onremove={handle_remove_hop}
         onupdate={handle_update_hop}
+      />
+    </div>
+
+    <!-- Water Chemistry -->
+    <div class="section-row" data-testid="water-chemistry-section-row">
+      <WaterChemistrySection
+        water_adjustments={recipe.water_adjustments}
+        fermentables={recipe.fermentables}
+        batch_size_l={DEFAULT_BATCH_SIZE_L}
+        mash_ph_formula={recipe.mash_ph_formula}
+        onupdate_adjustments={handle_update_water_adjustments}
       />
     </div>
   {/if}

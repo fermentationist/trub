@@ -351,7 +351,7 @@ export const recipe_store = {
     if (current === null) {
       return void 0;
     }
-    const saved_id = await RecipeRepository.save(current);
+    const saved_id = await RecipeRepository.save($state.snapshot(current));
     if (current.id === void 0) {
       current.id = saved_id;
     }

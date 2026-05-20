@@ -1,7 +1,9 @@
 {
   "name": "trub-monorepo",
-  "private": true,
+  "private": false,
   "type": "module",
+  "description": "A local-first homebrewing recipe designer. Design, calculate, and refine beer recipes entirely in the browser with no account, no server, and no internet connection required.",
+  "author": "Dennis Hodges (https://github.com/fermentationist)",
   "scripts": {
     "build": "pnpm --filter @trub/app build",
     "dev": "pnpm --filter @trub/app dev",

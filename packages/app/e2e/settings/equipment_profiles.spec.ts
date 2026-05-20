@@ -198,11 +198,12 @@ test.describe("Equipment Profiles section", () => {
     await open_settings(page);
     await add_profile(page, "To Be Deleted", "19", "70");
 
-    // Register dialog handler BEFORE clicking delete.
-    page.on("dialog", (dialog) => dialog.accept());
-
     const row = profile_row_by_name(page, "To Be Deleted");
     await row.locator("[data-testid^='equipment-delete-button-']").click();
+
+    // Confirm via the custom dialog.
+    await expect(page.getByTestId("confirm-dialog")).toBeVisible();
+    await page.getByTestId("confirm-dialog-confirm").click();
 
     // Profile must disappear and empty state must return.
     await expect(
@@ -222,11 +223,12 @@ test.describe("Equipment Profiles section", () => {
     await open_settings(page);
     await add_profile(page, "Should Survive", "19", "70");
 
-    // Dismiss the dialog so the delete is cancelled.
-    page.on("dialog", (dialog) => dialog.dismiss());
-
     const row = profile_row_by_name(page, "Should Survive");
     await row.locator("[data-testid^='equipment-delete-button-']").click();
+
+    // Cancel via the custom dialog.
+    await expect(page.getByTestId("confirm-dialog")).toBeVisible();
+    await page.getByTestId("confirm-dialog-cancel").click();
 
     // Profile must still be visible.
     await expect(

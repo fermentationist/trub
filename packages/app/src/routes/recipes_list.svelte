@@ -3,6 +3,7 @@
   import { recipe_list_store } from "../stores/recipe_list_store.svelte";
   import { equipment_store } from "../stores/equipment_store.svelte";
   import RecipeCard from "../components/recipe_card/recipe_card.svelte";
+  import ConfirmDialog from "../components/confirm_dialog/confirm_dialog.svelte";
   import type { SortField, SortDirection } from "../stores/recipe_list_store.svelte";
 
   // ---------------------------------------------------------------------------
@@ -28,6 +29,8 @@
   // ---------------------------------------------------------------------------
 
   let search_input_value = $state("");
+  let delete_confirm_open = $state(false);
+  let delete_target_id = $state<number | void>(void 0);
 
   // ---------------------------------------------------------------------------
   // Derived shortcuts
@@ -80,12 +83,21 @@
   }
 
   function handle_delete(id: number): void {
-    const confirmed = window.confirm(
-      "Are you sure you want to delete this recipe? This cannot be undone.",
-    );
-    if (confirmed) {
-      void recipe_list_store.delete_recipe(id);
+    delete_target_id = id;
+    delete_confirm_open = true;
+  }
+
+  function confirm_delete(): void {
+    if (delete_target_id !== void 0) {
+      void recipe_list_store.delete_recipe(delete_target_id);
     }
+    delete_confirm_open = false;
+    delete_target_id = void 0;
+  }
+
+  function cancel_delete(): void {
+    delete_confirm_open = false;
+    delete_target_id = void 0;
   }
 
   function handle_duplicate(id: number): void {
@@ -250,6 +262,16 @@
       </div>
     {/if}
   </div>
+
+  <ConfirmDialog
+    open={delete_confirm_open}
+    title="Delete recipe"
+    message="Are you sure you want to delete this recipe? This cannot be undone."
+    confirm_label="Delete"
+    variant="danger"
+    onconfirm={confirm_delete}
+    oncancel={cancel_delete}
+  />
 </section>
 
 <style>

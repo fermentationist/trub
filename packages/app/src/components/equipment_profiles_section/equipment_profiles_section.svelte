@@ -3,6 +3,7 @@
   import { EquipmentRepository } from "../../repositories/equipment_repository";
   import UnitInput from "../unit_input/unit_input.svelte";
   import UnitValue from "../unit_value/unit_value.svelte";
+  import ConfirmDialog from "../confirm_dialog/confirm_dialog.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -47,6 +48,10 @@
   let form_draft = $state<EquipmentProfile>({ ...DEFAULT_PROFILE });
 
   let is_saving = $state(false);
+
+  // Confirm dialog state for delete
+  let delete_confirm_open = $state(false);
+  let delete_target_profile = $state<EquipmentProfile | void>(void 0);
 
   // ---------------------------------------------------------------------------
   // Load
@@ -123,27 +128,37 @@
   // Delete
   // ---------------------------------------------------------------------------
 
-  async function handle_delete(profile: EquipmentProfile): Promise<void> {
+  function handle_delete(profile: EquipmentProfile): void {
     if (profile.id === void 0) {
       return;
     }
-    const confirmed = window.confirm(
-      `Delete "${profile.name}"? This cannot be undone.`,
-    );
-    if (!confirmed) {
+    delete_target_profile = profile;
+    delete_confirm_open = true;
+  }
+
+  async function confirm_delete(): Promise<void> {
+    if (delete_target_profile === void 0 || delete_target_profile.id === void 0) {
       return;
     }
     try {
-      await EquipmentRepository.delete(profile.id);
+      await EquipmentRepository.delete(delete_target_profile.id);
       // Close edit form if this profile was being edited
-      if (editing_id === profile.id) {
+      if (editing_id === delete_target_profile.id) {
         close_form();
       }
       await load_profiles();
       onchange?.();
     } catch {
       // Silent — list remains unchanged
+    } finally {
+      delete_confirm_open = false;
+      delete_target_profile = void 0;
     }
+  }
+
+  function cancel_delete(): void {
+    delete_confirm_open = false;
+    delete_target_profile = void 0;
   }
 
   // ---------------------------------------------------------------------------
@@ -641,6 +656,18 @@
       </ul>
     {/if}
   {/if}
+
+  <ConfirmDialog
+    open={delete_confirm_open}
+    title="Delete profile"
+    message={delete_target_profile !== void 0
+      ? `Delete "${delete_target_profile.name}"? This cannot be undone.`
+      : ""}
+    confirm_label="Delete"
+    variant="danger"
+    onconfirm={confirm_delete}
+    oncancel={cancel_delete}
+  />
 </section>
 
 <style>

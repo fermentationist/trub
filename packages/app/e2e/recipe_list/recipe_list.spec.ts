@@ -348,16 +348,15 @@ test.describe("Recipe list page", () => {
 
     await create_recipe(page, "Porter to Delete");
 
-    // Register dialog handler before clicking delete so we don't miss it.
-    page.on("dialog", async (dialog) => {
-      await dialog.accept();
-    });
-
     const delete_btn = page.getByRole("button", {
       name: /^Delete Porter to Delete/,
     });
     await expect(delete_btn).toBeVisible();
     await delete_btn.click();
+
+    // Confirm via the custom dialog.
+    await expect(page.getByTestId("confirm-dialog")).toBeVisible();
+    await page.getByTestId("confirm-dialog-confirm").click();
 
     // The card must disappear.
     await expect(

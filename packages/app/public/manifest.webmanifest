@@ -2,7 +2,7 @@
   "name": "Trub",
   "short_name": "Trub",
   "description": "Local-first homebrewing recipe designer",
-  "start_url": "/",
+  "start_url": ".",
   "display": "standalone",
   "background_color": "#0e0e0e",
   "theme_color": "#0e0e0e",

@@ -339,7 +339,7 @@ test.describe("Settings page", () => {
       SMALL_VOLUME: ["mL", "tsp", "tbsp", "fl_oz"],
       GRAIN_WEIGHT: ["lb_oz", "kg"],
       HOP_WEIGHT: ["oz", "g"],
-      MISC_WEIGHT: ["g", "oz", "tsp"],
+      MISC_WEIGHT: ["g", "oz"],
       TEMPERATURE: ["F", "C"],
       GRAVITY: ["SG", "Plato"],
       COLOR: ["SRM", "EBC", "Lovibond"],

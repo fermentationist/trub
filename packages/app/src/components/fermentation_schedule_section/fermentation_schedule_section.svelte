@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { FermentationStep } from "@trub/types";
+  import UnitInput from "../unit_input/unit_input.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -39,7 +40,6 @@
     }
 
     const numeric_fields = new Set<keyof FermentationStep>([
-      "temp_c",
       "duration_days",
     ]);
 
@@ -95,7 +95,7 @@
         <thead>
           <tr>
             <th class="col-name" scope="col">Name</th>
-            <th class="col-temp" scope="col">Temp (°C)</th>
+            <th class="col-temp" scope="col">Temp</th>
             <th class="col-duration" scope="col">Duration (days)</th>
             <th class="col-remove" scope="col">
               <span class="sr-only">Remove</span>
@@ -122,22 +122,14 @@
                 />
               </td>
 
-              <!-- Temp (°C) -->
+              <!-- Temp -->
               <td class="col-temp">
-                <input
-                  class="cell-input cell-input--numeric"
-                  data-testid="fermentation-temp-input-{index}"
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.5"
+                <UnitInput
                   value={step.temp_c}
-                  oninput={(e) =>
-                    handle_field_change(
-                      index,
-                      "temp_c",
-                      (e.target as HTMLInputElement).value,
-                    )}
+                  category="TEMPERATURE"
+                  onchange={(v) => onupdate(index, { ...step, temp_c: v })}
+                  step={0.5}
+                  data_testid="fermentation-temp-input-{index}"
                 />
               </td>
 

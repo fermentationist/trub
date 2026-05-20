@@ -3,6 +3,7 @@
   import type { Theme } from "../stores/settings_store.svelte";
   import type { UnitPreferences, FormulaDefaults } from "@trub/types";
   import EquipmentProfilesSection from "../components/equipment_profiles_section/equipment_profiles_section.svelte";
+  import { UNIT_OPTIONS } from "../lib/constants/UNITS";
 
   // ---------------------------------------------------------------------------
   // Lifecycle — load settings on mount
@@ -25,97 +26,26 @@
   // Unit preference options
   // ---------------------------------------------------------------------------
 
-  const UNIT_FIELDS: Array<{
-    category: keyof UnitPreferences;
-    label: string;
-    options: Array<{ value: string; label: string }>;
-  }> = [
-    {
-      category: "BATCH_VOLUME",
-      label: "Batch Volume",
-      options: [
-        { value: "gal", label: "Gallons" },
-        { value: "L", label: "Liters" },
-      ],
-    },
-    {
-      category: "SMALL_VOLUME",
-      label: "Small Volume",
-      options: [
-        { value: "mL", label: "Milliliters" },
-        { value: "tsp", label: "Teaspoons" },
-        { value: "tbsp", label: "Tablespoons" },
-        { value: "fl_oz", label: "Fluid Ounces" },
-      ],
-    },
-    {
-      category: "GRAIN_WEIGHT",
-      label: "Grain Weight",
-      options: [
-        { value: "lb_oz", label: "Pounds/Ounces" },
-        { value: "kg", label: "Kilograms" },
-      ],
-    },
-    {
-      category: "HOP_WEIGHT",
-      label: "Hop Weight",
-      options: [
-        { value: "oz", label: "Ounces" },
-        { value: "g", label: "Grams" },
-      ],
-    },
-    {
-      category: "MISC_WEIGHT",
-      label: "Misc Weight",
-      options: [
-        { value: "g", label: "Grams" },
-        { value: "oz", label: "Ounces" },
-        { value: "tsp", label: "Teaspoons" },
-      ],
-    },
-    {
-      category: "TEMPERATURE",
-      label: "Temperature",
-      options: [
-        { value: "F", label: "Fahrenheit" },
-        { value: "C", label: "Celsius" },
-      ],
-    },
-    {
-      category: "GRAVITY",
-      label: "Gravity",
-      options: [
-        { value: "SG", label: "Specific Gravity" },
-        { value: "Plato", label: "Degrees Plato" },
-      ],
-    },
-    {
-      category: "COLOR",
-      label: "Color",
-      options: [
-        { value: "SRM", label: "SRM" },
-        { value: "EBC", label: "EBC" },
-        { value: "Lovibond", label: "Lovibond" },
-      ],
-    },
-    {
-      category: "PRESSURE",
-      label: "Pressure",
-      options: [
-        { value: "PSI", label: "PSI" },
-        { value: "kPa", label: "kPa" },
-        { value: "bar", label: "Bar" },
-      ],
-    },
-    {
-      category: "EVAP_RATE",
-      label: "Evaporation Rate",
-      options: [
-        { value: "gal_per_hr", label: "Gallons/hr" },
-        { value: "L_per_hr", label: "Liters/hr" },
-      ],
-    },
-  ];
+  const CATEGORY_LABELS: Record<keyof UnitPreferences, string> = {
+    BATCH_VOLUME: "Batch Volume",
+    SMALL_VOLUME: "Small Volume",
+    GRAIN_WEIGHT: "Grain Weight",
+    HOP_WEIGHT: "Hop Weight",
+    MISC_WEIGHT: "Misc Weight",
+    TEMPERATURE: "Temperature",
+    GRAVITY: "Gravity",
+    COLOR: "Color",
+    PRESSURE: "Pressure",
+    EVAP_RATE: "Evaporation Rate",
+  };
+
+  const UNIT_FIELDS = (Object.keys(CATEGORY_LABELS) as Array<keyof UnitPreferences>).map(
+    (category) => ({
+      category,
+      label: CATEGORY_LABELS[category],
+      options: UNIT_OPTIONS[category],
+    }),
+  );
 
   // ---------------------------------------------------------------------------
   // Formula options

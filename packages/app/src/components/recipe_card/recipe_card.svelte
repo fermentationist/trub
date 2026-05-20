@@ -15,6 +15,8 @@
   } from "@trub/calc";
   import type { Recipe, BrewType } from "@trub/types";
   import { equipment_store } from "../../stores/equipment_store.svelte";
+  import { settings_store } from "../../stores/settings_store.svelte";
+  import UnitValue from "../unit_value/unit_value.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -93,23 +95,17 @@
 
   const srm_color = $derived(srm_to_css_color(srm));
 
+  const color_label = $derived(settings_store.unit_preferences.COLOR);
+
   // ---------------------------------------------------------------------------
   // Formatting helpers — keep display logic out of the template
   // ---------------------------------------------------------------------------
-
-  function format_gravity(value: number): string {
-    return value.toFixed(3);
-  }
 
   function format_abv(value: number): string {
     return `${value.toFixed(1)}%`;
   }
 
   function format_ibu(value: number): string {
-    return value.toFixed(1);
-  }
-
-  function format_srm(value: number): string {
     return value.toFixed(1);
   }
 
@@ -168,11 +164,12 @@
   <div class="stats_row">
     <div class="stat_item">
       <span class="stat_label">OG</span>
-      <span
-        class="stat_value"
-        data-testid="recipe-card-og-{recipe.id}"
-      >
-        {format_gravity(og)}
+      <span class="stat_value">
+        <UnitValue
+          value={og}
+          category="GRAVITY"
+          data_testid="recipe-card-og-{recipe.id}"
+        />
       </span>
     </div>
 
@@ -203,12 +200,16 @@
     <div class="stat_divider" aria-hidden="true"></div>
 
     <div class="stat_item">
-      <span class="stat_label">SRM</span>
-      <div
-        class="srm_display"
-        data-testid="recipe-card-srm-{recipe.id}"
-      >
-        <span class="stat_value">{format_srm(srm)}</span>
+      <span class="stat_label">{color_label}</span>
+      <div class="srm_display">
+        <span class="stat_value">
+          <UnitValue
+            value={srm}
+            category="COLOR"
+            show_suffix={false}
+            data_testid="recipe-card-srm-{recipe.id}"
+          />
+        </span>
         <span
           class="srm_swatch"
           style="background-color: {srm_color}"

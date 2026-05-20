@@ -92,8 +92,9 @@ test.describe("SRM color stat and color swatch", () => {
     await expect(page.getByTestId("recipe-editor")).toBeVisible();
 
     // ---------------------------------------- initial SRM and swatch (empty recipe)
-    // With no fermentables the SRM should read "0.0" and the swatch must exist.
-    await expect(page.getByTestId("stat-srm-value")).toHaveText("0.0");
+    // With no fermentables the SRM should read "0.0 SRM" (UnitValue appends the
+    // unit suffix; US default is SRM) and the swatch must exist.
+    await expect(page.getByTestId("stat-srm-value")).toHaveText("0.0 SRM");
     await expect(page.getByTestId("color-swatch")).toBeVisible();
 
     // Capture the default swatch color so we can assert it changes later.
@@ -111,7 +112,7 @@ test.describe("SRM color stat and color swatch", () => {
     // ------------------------------------------ verify SRM is now greater than 0
     // toHaveText uses exact matching by default; use a regex to assert the value
     // is anything other than "0.0".
-    await expect(page.getByTestId("stat-srm-value")).not.toHaveText("0.0");
+    await expect(page.getByTestId("stat-srm-value")).not.toHaveText("0.0 SRM");
 
     // Capture the SRM value string so we can compare it after adding a dark malt.
     const srm_after_pale = await page
@@ -199,7 +200,7 @@ test.describe("SRM color stat and color swatch", () => {
     }).toPass({ timeout: 5000 });
 
     // --------- verify SRM is still > 0 (pale malt still contributes color)
-    await expect(page.getByTestId("stat-srm-value")).not.toHaveText("0.0");
+    await expect(page.getByTestId("stat-srm-value")).not.toHaveText("0.0 SRM");
 
     // ------------------------------------ verify swatch lightened after removal
     // The swatch color should revert to match the pale-malt-only color, which

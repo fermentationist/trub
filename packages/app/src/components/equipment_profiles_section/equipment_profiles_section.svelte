@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { EquipmentProfile } from "@trub/types";
   import { EquipmentRepository } from "../../repositories/equipment_repository";
+  import UnitInput from "../unit_input/unit_input.svelte";
+  import UnitValue from "../unit_value/unit_value.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -227,31 +229,25 @@
           />
 
           <!-- Batch Size -->
-          <label class="form-label" for="eq-form-batch-size">
-            Batch Size (L)
-          </label>
-          <input
-            id="eq-form-batch-size"
-            class="form-input form-input--numeric"
-            data-testid="equipment-form-batch-size"
-            type="number"
-            min="0"
-            step="0.01"
+          <span class="form-label">Batch Size</span>
+          <UnitInput
             value={form_draft.batch_size_l}
-            oninput={(e) => (form_draft.batch_size_l = num_field(e))}
+            category="BATCH_VOLUME"
+            onchange={(v) => { form_draft.batch_size_l = v; }}
+            step={0.1}
+            min={0}
+            data_testid="equipment-form-batch-size"
           />
 
-          <!-- Boil Size -->
-          <label class="form-label" for="eq-form-boil-size">Boil Size (L)</label>
-          <input
-            id="eq-form-boil-size"
-            class="form-input form-input--numeric"
-            data-testid="equipment-form-boil-size"
-            type="number"
-            min="0"
-            step="0.01"
+          <!-- Pre-Boil Volume -->
+          <span class="form-label">Pre-Boil Volume</span>
+          <UnitInput
             value={form_draft.boil_size_l}
-            oninput={(e) => (form_draft.boil_size_l = num_field(e))}
+            category="BATCH_VOLUME"
+            onchange={(v) => { form_draft.boil_size_l = v; }}
+            step={0.1}
+            min={0}
+            data_testid="equipment-form-boil-size"
           />
 
           <!-- Boil Time -->
@@ -286,48 +282,36 @@
           />
 
           <!-- Evaporation Rate -->
-          <label class="form-label" for="eq-form-evap-rate">
-            Evaporation Rate (L/hr)
-          </label>
-          <input
-            id="eq-form-evap-rate"
-            class="form-input form-input--numeric"
-            data-testid="equipment-form-evap-rate"
-            type="number"
-            min="0"
-            step="0.01"
+          <span class="form-label">Evaporation Rate</span>
+          <UnitInput
             value={form_draft.evap_rate_l_per_hr}
-            oninput={(e) => (form_draft.evap_rate_l_per_hr = num_field(e))}
+            category="EVAP_RATE"
+            onchange={(v) => { form_draft.evap_rate_l_per_hr = v; }}
+            step={0.1}
+            min={0}
+            data_testid="equipment-form-evap-rate"
           />
 
           <!-- Trub/Chiller Loss -->
-          <label class="form-label" for="eq-form-trub-loss">
-            Trub/Chiller Loss (L)
-          </label>
-          <input
-            id="eq-form-trub-loss"
-            class="form-input form-input--numeric"
-            data-testid="equipment-form-trub-loss"
-            type="number"
-            min="0"
-            step="0.01"
+          <span class="form-label">Trub/Chiller Loss</span>
+          <UnitInput
             value={form_draft.trub_chiller_loss_l}
-            oninput={(e) => (form_draft.trub_chiller_loss_l = num_field(e))}
+            category="BATCH_VOLUME"
+            onchange={(v) => { form_draft.trub_chiller_loss_l = v; }}
+            step={0.1}
+            min={0}
+            data_testid="equipment-form-trub-loss"
           />
 
           <!-- Mash Tun Dead Space -->
-          <label class="form-label" for="eq-form-dead-space">
-            Mash Tun Dead Space (L)
-          </label>
-          <input
-            id="eq-form-dead-space"
-            class="form-input form-input--numeric"
-            data-testid="equipment-form-dead-space"
-            type="number"
-            min="0"
-            step="0.01"
+          <span class="form-label">Mash Tun Dead Space</span>
+          <UnitInput
             value={form_draft.mash_tun_dead_space_l}
-            oninput={(e) => (form_draft.mash_tun_dead_space_l = num_field(e))}
+            category="BATCH_VOLUME"
+            onchange={(v) => { form_draft.mash_tun_dead_space_l = v; }}
+            step={0.1}
+            min={0}
+            data_testid="equipment-form-dead-space"
           />
 
           <!-- Mash Tun Thermal Mass -->
@@ -434,9 +418,12 @@
               <div class="profile-stats">
                 <span class="stat">
                   <span class="stat-label">Batch</span>
-                  <span class="stat-value"
-                    >{profile.batch_size_l.toFixed(1)} L</span
-                  >
+                  <span class="stat-value">
+                    <UnitValue
+                      value={profile.batch_size_l}
+                      category="BATCH_VOLUME"
+                    />
+                  </span>
                 </span>
                 <span class="stat">
                   <span class="stat-label">Eff.</span>
@@ -496,39 +483,25 @@
                   />
 
                   <!-- Batch Size -->
-                  <label
-                    class="form-label"
-                    for="eq-edit-batch-size-{profile_id}"
-                  >
-                    Batch Size (L)
-                  </label>
-                  <input
-                    id="eq-edit-batch-size-{profile_id}"
-                    class="form-input form-input--numeric"
-                    data-testid="equipment-form-batch-size"
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <span class="form-label">Batch Size</span>
+                  <UnitInput
                     value={form_draft.batch_size_l}
-                    oninput={(e) => (form_draft.batch_size_l = num_field(e))}
+                    category="BATCH_VOLUME"
+                    onchange={(v) => { form_draft.batch_size_l = v; }}
+                    step={0.1}
+                    min={0}
+                    data_testid="equipment-form-batch-size"
                   />
 
-                  <!-- Boil Size -->
-                  <label
-                    class="form-label"
-                    for="eq-edit-boil-size-{profile_id}"
-                  >
-                    Boil Size (L)
-                  </label>
-                  <input
-                    id="eq-edit-boil-size-{profile_id}"
-                    class="form-input form-input--numeric"
-                    data-testid="equipment-form-boil-size"
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <!-- Pre-Boil Volume -->
+                  <span class="form-label">Pre-Boil Volume</span>
+                  <UnitInput
                     value={form_draft.boil_size_l}
-                    oninput={(e) => (form_draft.boil_size_l = num_field(e))}
+                    category="BATCH_VOLUME"
+                    onchange={(v) => { form_draft.boil_size_l = v; }}
+                    step={0.1}
+                    min={0}
+                    data_testid="equipment-form-boil-size"
                   />
 
                   <!-- Boil Time -->
@@ -569,60 +542,36 @@
                   />
 
                   <!-- Evaporation Rate -->
-                  <label
-                    class="form-label"
-                    for="eq-edit-evap-rate-{profile_id}"
-                  >
-                    Evaporation Rate (L/hr)
-                  </label>
-                  <input
-                    id="eq-edit-evap-rate-{profile_id}"
-                    class="form-input form-input--numeric"
-                    data-testid="equipment-form-evap-rate"
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <span class="form-label">Evaporation Rate</span>
+                  <UnitInput
                     value={form_draft.evap_rate_l_per_hr}
-                    oninput={(e) =>
-                      (form_draft.evap_rate_l_per_hr = num_field(e))}
+                    category="EVAP_RATE"
+                    onchange={(v) => { form_draft.evap_rate_l_per_hr = v; }}
+                    step={0.1}
+                    min={0}
+                    data_testid="equipment-form-evap-rate"
                   />
 
                   <!-- Trub/Chiller Loss -->
-                  <label
-                    class="form-label"
-                    for="eq-edit-trub-loss-{profile_id}"
-                  >
-                    Trub/Chiller Loss (L)
-                  </label>
-                  <input
-                    id="eq-edit-trub-loss-{profile_id}"
-                    class="form-input form-input--numeric"
-                    data-testid="equipment-form-trub-loss"
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <span class="form-label">Trub/Chiller Loss</span>
+                  <UnitInput
                     value={form_draft.trub_chiller_loss_l}
-                    oninput={(e) =>
-                      (form_draft.trub_chiller_loss_l = num_field(e))}
+                    category="BATCH_VOLUME"
+                    onchange={(v) => { form_draft.trub_chiller_loss_l = v; }}
+                    step={0.1}
+                    min={0}
+                    data_testid="equipment-form-trub-loss"
                   />
 
                   <!-- Mash Tun Dead Space -->
-                  <label
-                    class="form-label"
-                    for="eq-edit-dead-space-{profile_id}"
-                  >
-                    Mash Tun Dead Space (L)
-                  </label>
-                  <input
-                    id="eq-edit-dead-space-{profile_id}"
-                    class="form-input form-input--numeric"
-                    data-testid="equipment-form-dead-space"
-                    type="number"
-                    min="0"
-                    step="0.01"
+                  <span class="form-label">Mash Tun Dead Space</span>
+                  <UnitInput
                     value={form_draft.mash_tun_dead_space_l}
-                    oninput={(e) =>
-                      (form_draft.mash_tun_dead_space_l = num_field(e))}
+                    category="BATCH_VOLUME"
+                    onchange={(v) => { form_draft.mash_tun_dead_space_l = v; }}
+                    step={0.1}
+                    min={0}
+                    data_testid="equipment-form-dead-space"
                   />
 
                   <!-- Mash Tun Thermal Mass -->

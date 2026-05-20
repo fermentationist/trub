@@ -115,8 +115,10 @@ test.describe("Mash Schedule section", () => {
     await expect(page.getByTestId("mash-empty-state")).not.toBeVisible();
 
     // Verify default values.
+    // The default target_temp_c is 67°C. UnitInput displays in °F (US default):
+    // c_to_f(67) = 152.6°F, formatted to 1 decimal place → "152.6".
     await expect(page.getByTestId("mash-type-select-0")).toHaveValue("infusion");
-    await expect(page.getByTestId("mash-temp-input-0")).toHaveValue("67");
+    await expect(page.getByTestId("mash-temp-input-0")).toHaveValue("152.6");
     await expect(page.getByTestId("mash-time-input-0")).toHaveValue("60");
     await expect(page.getByTestId("mash-water-input-0")).toHaveValue("0");
 
@@ -277,8 +279,10 @@ test.describe("Fermentation Schedule section", () => {
     ).not.toBeVisible();
 
     // Verify default values.
+    // The default temp_c is 18°C. UnitInput displays in °F (US default):
+    // c_to_f(18) = 64.4°F, formatted to 1 decimal place → "64.4".
     await expect(page.getByTestId("fermentation-temp-input-0")).toHaveValue(
-      "18",
+      "64.4",
     );
     await expect(
       page.getByTestId("fermentation-duration-input-0"),

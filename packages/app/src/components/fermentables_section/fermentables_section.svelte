@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { FermentableEntry, FermentableType } from "@trub/types";
+  import UnitInput from "../unit_input/unit_input.svelte";
+  import UnitValue from "../unit_value/unit_value.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -113,6 +115,19 @@
     onupdate(index, updated_entry);
   }
 
+  function handle_amount_change(index: number, canonical_kg: number): void {
+    const entry = fermentables[index];
+    if (entry === void 0) {
+      return;
+    }
+    const updated_entry: FermentableEntry = { ...entry, amount_kg: canonical_kg };
+    const with_updated_amount = fermentables.map((f, i) =>
+      i === index ? updated_entry : f,
+    );
+    const new_total = with_updated_amount.reduce((sum, f) => sum + f.amount_kg, 0);
+    onreplaceall(recalculate_percentages(with_updated_amount, new_total));
+  }
+
   function handle_add(): void {
     const new_entry: FermentableEntry = { ...DEFAULT_FERMENTABLE };
     onadd(new_entry);
@@ -159,7 +174,7 @@
           <tr>
             <th class="col-name" scope="col">Name</th>
             <th class="col-type" scope="col">Type</th>
-            <th class="col-amount" scope="col">Amount (kg)</th>
+            <th class="col-amount" scope="col">Amount</th>
             <th class="col-color" scope="col">Color (°L)</th>
             <th class="col-ppg" scope="col">PPG</th>
             <th class="col-pct" scope="col">%</th>
@@ -210,21 +225,15 @@
                 </select>
               </td>
 
-              <!-- Amount (kg) -->
+              <!-- Amount -->
               <td class="col-amount">
-                <input
-                  class="cell-input cell-input--numeric"
-                  data-testid="fermentable-amount-input-{index}"
-                  type="number"
-                  min="0"
-                  step="0.001"
+                <UnitInput
                   value={entry.amount_kg}
-                  oninput={(e) =>
-                    handle_field_change(
-                      index,
-                      "amount_kg",
-                      (e.target as HTMLInputElement).value,
-                    )}
+                  category="GRAIN_WEIGHT"
+                  onchange={(canonical_kg) => handle_amount_change(index, canonical_kg)}
+                  step={0.001}
+                  min={0}
+                  data_testid="fermentable-amount-input-{index}"
                 />
               </td>
 
@@ -293,7 +302,7 @@
           <tr class="totals-row" data-testid="fermentables-totals-row">
             <td class="col-name totals-label" colspan="2">Total</td>
             <td class="col-amount totals-value" data-testid="fermentables-total-kg">
-              {total_kg.toFixed(3)} kg
+              <UnitValue value={total_kg} category="GRAIN_WEIGHT" data_testid="fermentable-total-weight" />
             </td>
             <td class="col-color"></td>
             <td class="col-ppg"></td>
@@ -475,7 +484,7 @@
   }
 
   .col-amount {
-    min-width: 100px;
+    min-width: 160px;
   }
 
   .col-color {

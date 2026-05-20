@@ -1,4 +1,27 @@
-export { KG_TO_LB, LB_TO_KG, L_TO_GAL, GAL_TO_L } from "./constants";
+export {
+  KG_TO_LB,
+  LB_TO_KG,
+  L_TO_GAL,
+  GAL_TO_L,
+  G_PER_KG,
+  OZ_PER_KG,
+  ML_PER_L,
+  TSP_PER_ML,
+  TBSP_PER_ML,
+  FL_OZ_PER_ML,
+  PSI_PER_KPA,
+  BAR_PER_KPA,
+} from "./constants";
+export {
+  sg_to_plato,
+  plato_to_sg,
+  c_to_f,
+  f_to_c,
+  convert_units,
+  from_canonical,
+  to_canonical,
+  SUPPORTED_UNITS,
+} from "./convert";
 export {
   calculate_og,
   calculate_fg,

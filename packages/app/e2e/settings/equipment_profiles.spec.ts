@@ -150,7 +150,9 @@ test.describe("Equipment Profiles section", () => {
       "10-Gallon Kettle",
     );
     // The stat chips display batch size and efficiency.
-    await expect(row.locator(".stat-value").nth(0)).toHaveText("37.9 L");
+    // Batch size is entered as 37.85 in the user's preferred unit (gal, US default).
+    // UnitValue renders at 2 decimal places: "37.85 gal".
+    await expect(row.locator(".stat-value").nth(0)).toHaveText("37.85 gal");
     await expect(row.locator(".stat-value").nth(1)).toHaveText("75%");
   });
 
@@ -325,7 +327,9 @@ test.describe("Equipment Profiles section", () => {
     await expect(
       row.locator("[data-testid^='equipment-profile-name-']"),
     ).toHaveText("Persistent Kettle");
-    await expect(row.locator(".stat-value").nth(0)).toHaveText("37.9 L");
+    // Batch size is entered as 37.85 in the user's preferred unit (gal, US default).
+    // UnitValue renders at 2 decimal places: "37.85 gal".
+    await expect(row.locator(".stat-value").nth(0)).toHaveText("37.85 gal");
     await expect(row.locator(".stat-value").nth(1)).toHaveText("80%");
   });
 });

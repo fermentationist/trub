@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { HopEntry, HopForm, HopUse } from "@trub/types";
+  import UnitInput from "../unit_input/unit_input.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -48,14 +49,6 @@
   // Helpers
   // ---------------------------------------------------------------------------
 
-  /**
-   * Returns the display value for the amount input (grams).
-   * Canonical storage is kg; the input shows grams for readability.
-   */
-  function kg_to_g(kg: number): number {
-    return Math.round(kg * 1000 * 10) / 10;
-  }
-
   function handle_field_change(
     index: number,
     field: keyof HopEntry,
@@ -68,19 +61,13 @@
 
     const numeric_fields = new Set<keyof HopEntry>([
       "alpha_acid_pct",
-      "amount_kg",
       "time_minutes",
     ]);
 
     let coerced_value: string | number = raw_value;
 
     if (numeric_fields.has(field)) {
-      if (field === "amount_kg") {
-        // Input is in grams — convert back to kg for canonical storage
-        coerced_value = (parseFloat(raw_value) || 0) / 1000;
-      } else {
-        coerced_value = parseFloat(raw_value) || 0;
-      }
+      coerced_value = parseFloat(raw_value) || 0;
     }
 
     const updated_entry: HopEntry = {
@@ -137,7 +124,7 @@
           <tr>
             <th class="col-name" scope="col">Name</th>
             <th class="col-alpha" scope="col">Alpha (%)</th>
-            <th class="col-amount" scope="col">Amount (g)</th>
+            <th class="col-amount" scope="col">Amount</th>
             <th class="col-time" scope="col">Time (min)</th>
             <th class="col-use" scope="col">Use</th>
             <th class="col-form" scope="col">Form</th>
@@ -185,21 +172,15 @@
                 />
               </td>
 
-              <!-- Amount (grams — canonical is kg) -->
+              <!-- Amount — canonical is kg; UnitInput handles conversion -->
               <td class="col-amount">
-                <input
-                  class="cell-input cell-input--numeric"
-                  data-testid="hop-amount-input-{index}"
-                  type="number"
-                  min="0"
-                  step="1"
-                  value={kg_to_g(entry.amount_kg)}
-                  oninput={(e) =>
-                    handle_field_change(
-                      index,
-                      "amount_kg",
-                      (e.target as HTMLInputElement).value,
-                    )}
+                <UnitInput
+                  value={entry.amount_kg}
+                  category="HOP_WEIGHT"
+                  onchange={(v) => onupdate(index, { ...entry, amount_kg: v })}
+                  step={0.1}
+                  min={0}
+                  data_testid="hop-amount-input-{index}"
                 />
               </td>
 

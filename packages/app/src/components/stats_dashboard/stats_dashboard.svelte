@@ -20,6 +20,8 @@
     IbuFormula,
     ColorFormula,
   } from "@trub/types";
+  import UnitValue from "../unit_value/unit_value.svelte";
+  import { settings_store } from "../../stores/settings_store.svelte";
 
   const DEFAULT_ATTENUATION_PCT = 75;
 
@@ -81,11 +83,9 @@
 
   const beer_color = $derived(srm_to_css_color(srm));
 
-  // Formatting helpers keep display logic out of the template.
-  function format_gravity(value: number): string {
-    return value.toFixed(3);
-  }
+  const color_label = $derived(settings_store.unit_preferences.COLOR);
 
+  // Formatting helpers keep display logic out of the template.
   function format_abv(value: number): string {
     return `${value.toFixed(1)}%`;
   }
@@ -93,21 +93,21 @@
   function format_ibu(value: number): string {
     return value.toFixed(1);
   }
-
-  function format_srm(value: number): string {
-    return value.toFixed(1);
-  }
 </script>
 
 <section class="stats_dashboard" data-testid="stats-dashboard">
   <div class="stat_box" data-testid="stat-box-og">
     <span class="stat_label" data-testid="stat-label-og">OG</span>
-    <span class="stat_value" data-testid="stat-og-value">{format_gravity(og)}</span>
+    <span class="stat_value">
+      <UnitValue value={og} category="GRAVITY" data_testid="stat-og-value" />
+    </span>
   </div>
 
   <div class="stat_box" data-testid="stat-box-fg">
     <span class="stat_label" data-testid="stat-label-fg">FG</span>
-    <span class="stat_value" data-testid="stat-fg-value">{format_gravity(fg)}</span>
+    <span class="stat_value">
+      <UnitValue value={fg} category="GRAVITY" data_testid="stat-fg-value" />
+    </span>
   </div>
 
   <div class="stat_box" data-testid="stat-box-abv">
@@ -121,9 +121,11 @@
   </div>
 
   <div class="stat_box" data-testid="stat-box-srm">
-    <span class="stat_label" data-testid="stat-label-srm">SRM</span>
+    <span class="stat_label" data-testid="stat-label-srm">{color_label}</span>
     <div class="srm_display">
-      <span class="stat_value" data-testid="stat-srm-value">{format_srm(srm)}</span>
+      <span class="stat_value">
+        <UnitValue value={srm} category="COLOR" data_testid="stat-srm-value" />
+      </span>
       <span
         class="color_swatch"
         data-testid="color-swatch"

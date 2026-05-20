@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { MashStep, MashStepType } from "@trub/types";
+  import UnitInput from "../unit_input/unit_input.svelte";
 
   // ---------------------------------------------------------------------------
   // Constants
@@ -105,9 +106,9 @@
           <tr>
             <th class="col-name" scope="col">Name</th>
             <th class="col-type" scope="col">Type</th>
-            <th class="col-temp" scope="col">Target Temp (°C)</th>
+            <th class="col-temp" scope="col">Temp</th>
             <th class="col-time" scope="col">Time (min)</th>
-            <th class="col-water" scope="col">Water (L)</th>
+            <th class="col-water" scope="col">Water</th>
             <th class="col-remove" scope="col">
               <span class="sr-only">Remove</span>
             </th>
@@ -154,20 +155,12 @@
 
               <!-- Target Temp -->
               <td class="col-temp">
-                <input
-                  class="cell-input cell-input--numeric"
-                  data-testid="mash-temp-input-{index}"
-                  type="number"
-                  min="0"
-                  max="100"
-                  step="0.5"
+                <UnitInput
                   value={step.target_temp_c}
-                  oninput={(e) =>
-                    handle_field_change(
-                      index,
-                      "target_temp_c",
-                      (e.target as HTMLInputElement).value,
-                    )}
+                  category="TEMPERATURE"
+                  onchange={(v) => onupdate(index, { ...step, target_temp_c: v })}
+                  step={0.5}
+                  data_testid="mash-temp-input-{index}"
                 />
               </td>
 
@@ -191,19 +184,13 @@
 
               <!-- Water -->
               <td class="col-water">
-                <input
-                  class="cell-input cell-input--numeric"
-                  data-testid="mash-water-input-{index}"
-                  type="number"
-                  min="0"
-                  step="0.1"
+                <UnitInput
                   value={step.water_amount_l}
-                  oninput={(e) =>
-                    handle_field_change(
-                      index,
-                      "water_amount_l",
-                      (e.target as HTMLInputElement).value,
-                    )}
+                  category="BATCH_VOLUME"
+                  onchange={(v) => onupdate(index, { ...step, water_amount_l: v })}
+                  step={0.1}
+                  min={0}
+                  data_testid="mash-water-input-{index}"
                 />
               </td>
 

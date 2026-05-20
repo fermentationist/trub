@@ -1,6 +1,6 @@
 # Trub v1 — Feature Specification
 
-*April 2026*
+_April 2026_
 
 ---
 
@@ -45,6 +45,7 @@ trub/
 ```
 
 **Key rules:**
+
 - `@trub/types` has zero dependencies. It's just interfaces and enums.
 - `@trub/calc` depends only on `@trub/types`. Every function is pure: inputs in, result out, no side effects, no storage calls.
 - `@trub/app` imports from both but neither package imports from `app`.
@@ -77,7 +78,7 @@ interface Recipe {
   id?: number;
   name: string;
   author: string;
-  type: 'allGrain' | 'biab' | 'partialMash' | 'extract';
+  type: "allGrain" | "biab" | "partialMash" | "extract";
   styleId: number | null;
   equipmentId: number | null;
   waterProfileId: number | null;
@@ -96,9 +97,9 @@ interface Recipe {
   waterAdjustments: WaterAdjustment;
 
   // Calculation settings per recipe
-  ibuFormula: 'tinseth' | 'rager' | 'mibu';
-  colorFormula: 'morey' | 'daniels' | 'mosher';
-  abvFormula: 'simple' | 'alternate';
+  ibuFormula: "tinseth" | "rager" | "mibu";
+  colorFormula: "morey" | "daniels" | "mosher";
+  abvFormula: "simple" | "alternate";
 
   // Metadata
   createdAt: Date;
@@ -176,6 +177,7 @@ The core screen. A single vertically-scrolling page where users build and edit r
     - Free-text area for recipe notes, brewing observations, goals
 
 **Interactions:**
+
 - All changes auto-save to Dexie (debounced, ~1s after last edit)
 - Undo/redo support (at minimum, Ctrl+Z for the last edit; ideally a short history)
 - Recipe scaling: a "Scale" button in the equipment section that proportionally adjusts all ingredient amounts to a new batch size while preserving recipe characteristics
@@ -215,6 +217,7 @@ Integrated into the recipe designer as a dedicated section or linked sub-view (n
    - Formula selection: document which pH model is in use
 
 **Calculations:**
+
 - Mineral additions follow standard brewing chemistry (salt → ion contribution by weight)
 - Mash pH: implement a simplified version of the Kaiser/Bru'n Water model. Document the formula and its assumptions in the Calculations settings page.
 - Sulfate-to-Chloride ratio: simple division, display as "X:1" or "1:X"
@@ -226,18 +229,19 @@ Integrated into the recipe designer as a dedicated section or linked sub-view (n
 **Settings → Calculations page:**
 
 For each calculation type, show:
+
 - Current formula selection (dropdown)
 - Brief plain-English description of what the formula does
 - Link to full documentation (in-app or external) showing the actual math
 
 **Configurable formulas:**
 
-| Calculation | Options | Default |
-|---|---|---|
-| IBU | Tinseth, Rager, mIBU (Hosom) | Tinseth |
-| Color (SRM) | Morey, Daniels, Mosher | Morey |
-| ABV | Simple ((OG-FG)×131.25), Alternate (more accurate) | Simple |
-| Mash pH | Simplified Kaiser model | Kaiser |
+| Calculation | Options                                            | Default |
+| ----------- | -------------------------------------------------- | ------- |
+| IBU         | Tinseth, Rager, mIBU (Hosom)                       | Tinseth |
+| Color (SRM) | Morey, Daniels, Mosher                             | Morey   |
+| ABV         | Simple ((OG-FG)×131.25), Alternate (more accurate) | Simple  |
+| Mash pH     | Simplified Kaiser model                            | Kaiser  |
 
 **Per-recipe override:** Each recipe stores its own formula selections. Changing the global default only affects new recipes. Existing recipes keep their settings.
 
@@ -250,18 +254,22 @@ For each calculation type, show:
 Ships with a curated seed database. Users can add custom ingredients.
 
 **Fermentables:**
+
 - Fields: name, type (grain / sugar / extract / adjunct), origin, color (Lovibond), potential (PPG), yield %, diastatic power, max usage %, notes
 - Seed data: ~200 common malts, sugars, extracts (sourced from BeerXML standard databases and manufacturer specs)
 
 **Hops:**
+
 - Fields: name, origin, alpha acid % (typical), beta acid %, form (pellet / whole / cryo), purpose (bittering / aroma / dual), substitutes, notes
 - Seed data: ~150 common varieties
 
 **Yeast:**
+
 - Fields: name, lab, product code, type (ale / lager / wheat / wine / other), form (liquid / dry), attenuation range %, temperature range, flocculation (low / medium / high), notes
 - Seed data: ~200 strains from major labs (Fermentis, Lallemand, White Labs, Wyeast, etc.)
 
 **Misc:**
+
 - Fields: name, type (spice / fining / water agent / herb / flavor / other), use stage, notes
 - Seed data: ~50 common additions
 
@@ -272,6 +280,7 @@ Ships with a curated seed database. Users can add custom ingredients.
 ### F5: Equipment Profiles
 
 **Fields:**
+
 - Name
 - Batch size (target volume into fermenter)
 - Boil size (pre-boil volume)
@@ -286,6 +295,7 @@ Ships with a curated seed database. Users can add custom ingredients.
 **Default profile:** One profile can be marked as default. New recipes inherit the default profile.
 
 **Seed data:** Ship with 2–3 common setups:
+
 - 5-gallon all-grain (standard cooler mash tun)
 - 5-gallon BIAB
 - 1-gallon small batch
@@ -297,6 +307,7 @@ Ships with a curated seed database. Users can add custom ingredients.
 **Source:** BJCP 2021 Style Guidelines (primary). Possibly Brewers Association guidelines as a secondary.
 
 **Per style, store:**
+
 - Name, category number, category name
 - OG range (min/max)
 - FG range (min/max)
@@ -312,6 +323,7 @@ Ships with a curated seed database. Users can add custom ingredients.
 ### F7: Recipe Management
 
 **Recipe List View:**
+
 - Card-based list (not a table)
 - Each card shows: recipe name, style, brew type, OG/IBU/ABV summary, SRM color dot, last modified date, tags
 - Sort by: newest, name, style, last modified
@@ -319,6 +331,7 @@ Ships with a curated seed database. Users can add custom ingredients.
 - Search: full-text search across recipe name, style, tags, notes
 
 **Actions:**
+
 - Create new recipe
 - Duplicate recipe
 - Delete recipe (with confirmation)
@@ -332,12 +345,14 @@ Ships with a curated seed database. Users can add custom ingredients.
 ### F8: BeerXML Import / Export
 
 **Import:**
+
 - Accept BeerXML 1.0 files (.xml)
 - Parse and map to Trub's recipe format
 - Handle missing/unknown ingredients gracefully (import as custom ingredients with a warning)
 - Support importing multiple recipes from a single file
 
 **Export:**
+
 - Export individual recipes as BeerXML 1.0
 - Export as PDF brew sheet (single-page printable summary)
 
@@ -387,22 +402,22 @@ Ships with a curated seed database. Users can add custom ingredients.
 
 ## Deferred Features (v1.1+)
 
-| Feature | Target Version | Notes |
-|---|---|---|
-| Batch tracking / brew sessions | v1.1 | Gravity logging, fermentation charts, tasting notes |
-| Brew timer | v1.1 | Countdown timers for mash steps and hop additions |
-| Inventory management | v1.1 | Track ingredients on hand, auto-deduct on brew |
-| Shopping list | v1.1 | Generated from recipe minus inventory |
-| Cost tracking | v1.1 | Per-ingredient costs |
-| Cloud sync (DIY server) | v1.2 | Self-hosted, open-source sync server. Single-writer multi-device, LWW conflict resolution. |
-| MCP server | v1.2+ | Requires sync enabled. Connects to same DIY sync backend. Reuses @trub/types and @trub/calc. |
-| Recipe versioning/snapshots | v1.2 | Save/restore versions of a recipe |
-| Recipe scaling by efficiency | v1.2 | Scale not just by volume but by efficiency target |
-| Community recipe library | v2.0 | Requires server infrastructure |
-| Device integrations (Tilt, iSpindel) | v2.0 | IoT device connectivity |
-| Wine / mead / cider / seltzer | v2.0 | Non-beer recipe types |
-| Commercial brewing features | v2.0+ | Multi-batch, bbl scaling, TTB reporting |
-| Plugin / extension system | v2.0+ | Custom formulas, community plugins |
+| Feature                              | Target Version | Notes                                                                                        |
+| ------------------------------------ | -------------- | -------------------------------------------------------------------------------------------- |
+| Batch tracking / brew sessions       | v1.1           | Gravity logging, fermentation charts, tasting notes                                          |
+| Brew timer                           | v1.1           | Countdown timers for mash steps and hop additions                                            |
+| Inventory management                 | v1.1           | Track ingredients on hand, auto-deduct on brew                                               |
+| Shopping list                        | v1.1           | Generated from recipe minus inventory                                                        |
+| Cost tracking                        | v1.1           | Per-ingredient costs                                                                         |
+| Cloud sync (DIY server)              | v1.2           | Self-hosted, open-source sync server. Single-writer multi-device, LWW conflict resolution.   |
+| MCP server                           | v1.2+          | Requires sync enabled. Connects to same DIY sync backend. Reuses @trub/types and @trub/calc. |
+| Recipe versioning/snapshots          | v1.2           | Save/restore versions of a recipe                                                            |
+| Recipe scaling by efficiency         | v1.2           | Scale not just by volume but by efficiency target                                            |
+| Community recipe library             | v2.0           | Requires server infrastructure                                                               |
+| Device integrations (Tilt, iSpindel) | v2.0           | IoT device connectivity                                                                      |
+| Wine / mead / cider / seltzer        | v2.0           | Non-beer recipe types                                                                        |
+| Commercial brewing features          | v2.0+          | Multi-batch, bbl scaling, TTB reporting                                                      |
+| Plugin / extension system            | v2.0+          | Custom formulas, community plugins                                                           |
 
 ---
 
@@ -420,4 +435,4 @@ Ships with a curated seed database. Users can add custom ingredients.
 
 ---
 
-*This spec is a living document. Update as decisions are made and implementation progresses.*
+_This spec is a living document. Update as decisions are made and implementation progresses._

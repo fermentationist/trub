@@ -613,4 +613,24 @@
     border-color: var(--color-accent);
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--color-accent) 25%, transparent);
   }
+
+  /* ---------------------------------------------------------------------------
+    Mobile layout
+  --------------------------------------------------------------------------- */
+
+  @media (max-width: 640px) {
+    .name-row {
+      flex-wrap: wrap;
+    }
+
+    .recipe-name-input {
+      min-width: 0;
+      font-size: var(--font-size-lg);
+    }
+
+    .toolbar-actions {
+      width: 100%;
+      justify-content: flex-end;
+    }
+  }
 </style>

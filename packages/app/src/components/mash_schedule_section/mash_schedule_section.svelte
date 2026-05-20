@@ -473,4 +473,103 @@
     white-space: nowrap;
     border-width: 0;
   }
+
+  /* ---------------------------------------------------------------------------
+    Mobile card layout — stacks table rows at ≤640px to eliminate horizontal
+    overflow and the scroll container that causes pointer interception bugs
+  --------------------------------------------------------------------------- */
+
+  @media (max-width: 640px) {
+    .table-wrapper {
+      overflow-x: visible;
+    }
+
+    .mash-table thead {
+      display: none;
+    }
+
+    .mash-table,
+    .mash-table tbody {
+      display: block;
+    }
+
+    .mash-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .mash-row:hover {
+      /* preserve hover feedback but on the card, not a table row */
+      background: var(--color-surface-raised);
+    }
+
+    .mash-table td {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      min-width: 0;
+      padding: 0;
+    }
+
+    /* Label prefix for each data cell — replaces the hidden column headers */
+
+    .mash-row td::before {
+      flex-shrink: 0;
+      width: 60px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .mash-row td.col-name::before {
+      content: "Name";
+    }
+
+    .mash-row td.col-type::before {
+      content: "Type";
+    }
+
+    .mash-row td.col-temp::before {
+      content: "Temp";
+    }
+
+    .mash-row td.col-time::before {
+      content: "Time";
+    }
+
+    .mash-row td.col-water::before {
+      content: "Water";
+    }
+
+    .mash-row td.col-remove {
+      justify-content: flex-end;
+    }
+
+    .mash-row td.col-remove::before {
+      display: none;
+    }
+
+    /* Let inputs and selects fill the remaining space next to the label */
+
+    .mash-row .cell-input,
+    .mash-row .cell-select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Column min-widths are desktop-only — zero them out on mobile */
+
+    .col-name,
+    .col-type,
+    .col-temp,
+    .col-time,
+    .col-water {
+      min-width: 0;
+    }
+  }
 </style>

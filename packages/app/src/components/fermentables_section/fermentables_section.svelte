@@ -603,6 +603,138 @@
   }
 
   /* ---------------------------------------------------------------------------
+    Mobile card layout (≤ 640 px)
+  --------------------------------------------------------------------------- */
+
+  @media (max-width: 640px) {
+    .table-wrapper {
+      overflow-x: visible;
+    }
+
+    .fermentables-table thead {
+      display: none;
+    }
+
+    .fermentables-table,
+    .fermentables-table tbody,
+    .fermentables-table tfoot {
+      display: block;
+    }
+
+    /* Each data row becomes a stacked card */
+    .fermentable-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Reset the last-of-type rule — the tfoot separator handles the boundary */
+    .fermentable-row:last-of-type {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .fermentable-row td {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      min-width: 0;
+      padding: 0;
+      /* Reset desktop column min-widths */
+      min-width: 0;
+    }
+
+    /* Generated labels */
+    .fermentable-row td.col-name::before {
+      content: "Name";
+    }
+    .fermentable-row td.col-type::before {
+      content: "Type";
+    }
+    .fermentable-row td.col-color::before {
+      content: "Color";
+    }
+    .fermentable-row td.col-ppg::before {
+      content: "PPG";
+    }
+    .fermentable-row td.col-amount::before {
+      content: "Amount";
+    }
+    .fermentable-row td.col-pct::before {
+      content: "%";
+    }
+
+    .fermentable-row td::before {
+      flex-shrink: 0;
+      width: 60px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Reset right-alignment from desktop col-pct rule */
+    .fermentable-row td.col-pct {
+      text-align: left;
+    }
+
+    .fermentable-row td.col-pct .pct-display {
+      text-align: left;
+      padding-right: 0;
+    }
+
+    /* Remove button: push to the right, no label */
+    .fermentable-row td.col-remove {
+      justify-content: flex-end;
+    }
+
+    .fermentable-row td.col-remove::before {
+      display: none;
+    }
+
+    /* Inputs and selects fill remaining space */
+    .fermentable-row .cell-input,
+    .fermentable-row .cell-select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Totals footer row */
+    .totals-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-top: 2px solid var(--color-border);
+    }
+
+    /* Hide the empty filler cells in the totals row */
+    .totals-row td.col-color,
+    .totals-row td.col-ppg,
+    .totals-row td.col-remove {
+      display: none;
+    }
+
+    .totals-row td {
+      padding: 0;
+    }
+
+    /* "Total" label spans naturally in flex */
+    .totals-row .totals-label {
+      flex: 1;
+    }
+
+    /* Amount and percentage values sit side-by-side to the right */
+    .totals-row td.col-amount,
+    .totals-row td.col-pct {
+      text-align: right;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
     Accessibility utility
   --------------------------------------------------------------------------- */
 

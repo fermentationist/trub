@@ -565,4 +565,117 @@
     white-space: nowrap;
     border-width: 0;
   }
+
+  /* ---------------------------------------------------------------------------
+    Mobile card layout — stacks columns vertically below 640px, eliminating
+    the horizontal scroll container that caused pointer interception in E2E
+    tests on narrow viewports (e.g. Pixel 5 at 393px).
+  --------------------------------------------------------------------------- */
+
+  @media (max-width: 640px) {
+    .table-wrapper {
+      overflow-x: visible;
+    }
+
+    .yeast-table thead {
+      display: none;
+    }
+
+    .yeast-table,
+    .yeast-table tbody {
+      display: block;
+    }
+
+    .yeast-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    /* Cancel the desktop hover background that bleeds outside the wrapper
+       when overflow is visible */
+    .yeast-row:hover {
+      background: var(--color-surface-raised);
+    }
+
+    .yeast-table td {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      padding: 0;
+      min-width: 0;
+    }
+
+    /* Shared label style — applied before individual content rules */
+    .yeast-row td::before {
+      flex-shrink: 0;
+      width: 64px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .yeast-row td.col-name::before {
+      content: "Name";
+    }
+
+    .yeast-row td.col-lab::before {
+      content: "Lab";
+    }
+
+    .yeast-row td.col-form::before {
+      content: "Form";
+    }
+
+    .yeast-row td.col-attenuation::before {
+      content: "Atten.";
+    }
+
+    .yeast-row td.col-temp::before {
+      content: "Temp";
+    }
+
+    .yeast-row td.col-flocculation::before {
+      content: "Flocc.";
+    }
+
+    .yeast-row td.col-remove {
+      justify-content: flex-end;
+    }
+
+    .yeast-row td.col-remove::before {
+      display: none;
+    }
+
+    /* Release fixed column min-widths so cells fill the card width */
+    .col-name,
+    .col-lab,
+    .col-form,
+    .col-attenuation,
+    .col-temp,
+    .col-flocculation {
+      min-width: 0;
+    }
+
+    .col-remove {
+      width: auto;
+      text-align: unset;
+    }
+
+    .yeast-row .cell-input,
+    .yeast-row .cell-select {
+      flex: 1;
+      min-width: 0;
+    }
+
+    /* Temp range inputs still share available space after the label */
+    .yeast-row .temp-range {
+      flex: 1;
+      min-width: 0;
+    }
+  }
 </style>

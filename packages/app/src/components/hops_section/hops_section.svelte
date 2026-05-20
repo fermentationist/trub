@@ -509,6 +509,92 @@
   }
 
   /* ---------------------------------------------------------------------------
+    Mobile card layout (≤ 640 px)
+  --------------------------------------------------------------------------- */
+
+  @media (max-width: 640px) {
+    .table-wrapper {
+      overflow-x: visible;
+    }
+
+    .hops-table thead {
+      display: none;
+    }
+
+    .hops-table,
+    .hops-table tbody {
+      display: block;
+    }
+
+    /* Each data row becomes a stacked card */
+    .hop-row {
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-sm);
+      padding: var(--spacing-md);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .hop-row:last-of-type {
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .hop-row td {
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-sm);
+      min-width: 0;
+      padding: 0;
+    }
+
+    /* Generated labels */
+    .hop-row td.col-name::before {
+      content: "Name";
+    }
+    .hop-row td.col-alpha::before {
+      content: "Alpha";
+    }
+    .hop-row td.col-amount::before {
+      content: "Amount";
+    }
+    .hop-row td.col-time::before {
+      content: "Time";
+    }
+    .hop-row td.col-use::before {
+      content: "Use";
+    }
+    .hop-row td.col-form::before {
+      content: "Form";
+    }
+
+    .hop-row td::before {
+      flex-shrink: 0;
+      width: 64px;
+      font-size: var(--font-size-xs);
+      font-weight: var(--font-weight-medium);
+      color: var(--color-text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    /* Remove button: push to the right, no label */
+    .hop-row td.col-remove {
+      justify-content: flex-end;
+    }
+
+    .hop-row td.col-remove::before {
+      display: none;
+    }
+
+    /* Inputs and selects fill remaining space */
+    .hop-row .cell-input,
+    .hop-row .cell-select {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  /* ---------------------------------------------------------------------------
     Accessibility utility
   --------------------------------------------------------------------------- */
 

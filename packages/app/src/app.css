@@ -33,6 +33,7 @@
   --font-weight-bold: 700;
   --line-height-tight: 1.25;
   --line-height-base: 1.5;
+  --line-height-relaxed: 1.75;
 
   /* Border radius */
   --radius-sm: 4px;
